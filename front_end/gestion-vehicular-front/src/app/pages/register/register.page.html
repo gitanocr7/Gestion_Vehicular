@@ -1,0 +1,54 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="danger">
+    <ion-title>Registro </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div style="max-width: 400px; margin: 20px auto;">
+    <div class="ion-text-center ion-margin-bottom">
+      <h2>Nuevo Usuario</h2>
+      <p>Complete sus datos para registrarse</p>
+    </div>
+
+
+    <ion-item fill="solid" class="ion-margin-bottom">
+      <ion-input label="Nombre" labelPlacement="floating" [(ngModel)]="user.nombre" type="text" (ionInput)="validarNombre()"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="errors.nombre" class="error-msg">
+      <small>{{ errors.nombre }}</small>
+    </ion-text>
+
+    
+    <ion-item fill="solid" class="ion-margin-bottom">
+      <ion-input label="Correo Electrónico" labelPlacement="floating" [(ngModel)]="user.correo" type="email" (ionInput)="validarCorreo()"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="errors.correo" class="error-msg">
+      <small>{{ errors.correo }}</small>
+    </ion-text>
+
+   
+    <ion-item fill="solid" class="ion-margin-bottom">
+      <ion-input label="RUT" labelPlacement="floating" [(ngModel)]="user.rut" type="text" placeholder="ej: 12345678-9 o 12.345.678-K" (ionInput)="validarRut()"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="errors.rut" class="error-msg">
+      <small>{{ errors.rut }}</small>
+    </ion-text>
+
+  
+    <ion-item fill="solid" class="ion-margin-bottom">
+      <ion-input label="Contraseña" labelPlacement="floating" [(ngModel)]="user.password" type="password" (ionInput)="validarPassword()"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="errors.password" class="error-msg">
+      <small>{{ errors.password }}</small>
+    </ion-text>
+
+    <ion-button expand="block" color="danger" (click)="onRegister()" class="ion-margin-top">
+      Registrarse
+    </ion-button>
+
+    <ion-button expand="block" fill="clear" color="medium" routerLink="/login">
+      Volver al Login
+    </ion-button>
+  </div>
+</ion-content>

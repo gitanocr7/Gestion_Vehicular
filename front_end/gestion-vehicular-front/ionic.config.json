@@ -1,0 +1,7 @@
+{
+  "name": "gestion-vehicular-front",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
