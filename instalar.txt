@@ -1,3 +1,9 @@
+DJANGO
+
 python -m pip install django-cors-headers
 python -m pip install djangorestframework
 pip install django
+
+ionic
+
+npm install -g @ionic/cli
