@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema APT - Sistema de Gestión Vehicular</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #c9302c;
+            --primary-dark: #961c19;
+            --secondary: #1a252f;
+            --accent: #f39c12;
+            --bg-light: #f8f9fa;
+            --text-dark: #2c3e50;
+            --text-light: #ffffff;
+            --success: #27ae60;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        /* --- BARRA SUPERIOR --- */
+        .top-bar {
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            padding: 8px 5%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .top-bar a {
+            color: #ffda79;
+            text-decoration: none;
+        }
+
+        /* --- NAVBAR PRINCIPAL --- */
+        .navbar {
+            background-color: var(--secondary);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-light);
+            text-decoration: none;
+        }
+
+        .brand i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .brand-text h1 {
+            font-size: 1.2rem;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-text span {
+            font-size: 0.75rem;
+            color: #bdc3c7;
+            font-weight: normal;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .btn-login {
+            background-color: var(--primary);
+            color: white !important;
+            padding: 8px 18px;
+            border-radius: 4px;
+            font-weight: 600 !important;
+            transition: background 0.3s ease !important;
+        }
+
+        .btn-login:hover {
+            background-color: var(--primary-dark) !important;
+        }
+
+        /* --- HERO PORTADA --- */
+        .hero {
+            background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)),
+                        url('https://images.unsplash.com/photo-1543165796-5426273eaab3?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--text-light);
+            padding: 40px 20px;
+        }
+
+        .hero-tag {
+            background-color: rgba(201, 48, 44, 0.2);
+            border: 1px solid var(--primary);
+            color: #ff7675;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .hero h2 {
+            font-size: 2.8rem;
+            max-width: 900px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            max-width: 700px;
+            margin-bottom: 35px;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-main {
+            padding: 14px 28px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background-color: white;
+            color: var(--secondary);
+        }
+
+        /* --- RESUMEN DE ESTADO DE FLOTA --- */
+        .status-bar {
+            max-width: 1100px;
+            margin: -40px auto 40px auto;
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .status-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .status-card:last-child {
+            border-right: none;
+        }
+
+        .status-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .icon-green { background-color: #e8f8f0; color: var(--success); }
+        .icon-yellow { background-color: #fef9e7; color: var(--accent); }
+        .icon-red { background-color: #fde8e8; color: var(--primary); }
+
+        .status-info h3 { font-size: 1.5rem; font-weight: 700; }
+        .status-info p { font-size: 0.85rem; color: #64748b; }
+
+        /* --- SECCIÓN DE MÓDULOS DE SISTEMA --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-title h3 {
+            font-size: 2rem;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            color: #64748b;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-img {
+            height: 180px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .card-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-body h4 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body h4 i {
+            color: var(--primary);
+        }
+
+        .card-body p {
+            color: #64748b;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .card-btn {
+            background-color: var(--secondary);
+            color: white;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .card-btn:hover {
+            background-color: var(--primary);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: var(--secondary);
+            color: #94a3b8;
+            padding: 40px 5% 20px 5%;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-col h4 {
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .footer-col p, .footer-col ul {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            list-style: none;
+        }
+
+        .footer-col a {
+            color: #94a3b8;
+            text-decoration: none;
+        }
+
+        .footer-col a:hover {
+            color: white;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <span>Cuerpo de Bomberos de Talcahuano — VIII Región del Biobío</span>
+    </div>
+
+    <nav class="navbar">
+        <a href="index.html" class="brand">
+            <i class="fa-solid fa-fire-extinguisher"></i>
+            <div class="brand-text">
+                <h1>Sistema de Gestión Vehicular</h1>
+                <span>Sistema APT — Mantención de Vehículos</span>
+            </div>
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> Inicio</a></li>
+            <li><a href="vehiculos.html"><i class="fa-solid fa-truck-pickup"></i> Flota de Vehículos</a></li>
+            <li><a href="mantenciones.html"><i class="fa-solid fa-wrench"></i> Mantenciones</a></li>
+            <li><a href="mapa-grifos.html"><i class="fa-solid fa-map-location-dot"></i> Mapa y Grifos</a></li>
+            <li><a href="talleres.html"><i class="fa-solid fa-warehouse"></i> Talleres</a></li>
+            <li><a href="login.html" class="btn-login"><i class="fa-solid fa-user-lock"></i> Acceso Personal</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <span class="hero-tag">Proyecto APT • Control Operativo</span>
+        <h2>Gestión y Seguimiento de Mantenciones de Vehículos de Emergencia</h2>
+        <p>Plataforma centralizada para garantizar la disponibilidad operativa de carro bombas, unidades de rescate y vehículos del Cuerpo de Bomberos de Talcahuano.</p>
+        
+        <div class="hero-buttons">
+            <a href="vehiculos.html" class="btn-main btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Consultar Estado de Flota</a>
+            <a href="mantenciones.html" class="btn-main btn-secondary"><i class="fa-solid fa-clipboard-list"></i> Historial de Mantenciones</a>
+        </div>
+    </section>
+
+    <div class="status-bar">
+        <div class="status-card">
+            <div class="status-icon icon-green"><i class="fa-solid fa-truck-medical"></i></div>
+            <div class="status-info">
+                <h3>18 Unidades</h3>
+                <p>Disponibles para Despacho</p>
+            </div>
+        </div>
+        <div class="status-card">
+            <div class="status-icon icon-yellow"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+            <div class="status-info">
+                <h3>3 Unidades</h3>
+                <p>En Mantención Preventiva</p>
+            </div>
+        </div>
+        <div class="status-card">
+            <div class="status-icon icon-red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="status-info">
+                <h3>1 Unidad</h3>
+                <p>Fuera de Servicio (Taller)</p>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+        <div class="section-title">
+            <h3>Módulos del Sistema</h3>
+            <p>Acceda a las distintas funcionalidades para la administración y consulta técnica de la flota</p>
+        </div>
+
+        <div class="modules-grid">
+            <article class="card">
+                <img src="https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=600&q=80" alt="Carro bomba Talcahuano" class="card-img">
+                <div class="card-body">
+                    <h4><i class="fa-solid fa-truck-fire"></i> Registro y Estado de Flota</h4>
+                    <p>Consulte características técnicas, estado operacional (disponible, mantención, fuera de servicio) y antecedentes detallados de cada carro o vehículo.</p>
+                    <a href="vehiculos.html" class="card-btn">Ver Flota Operativa</a>
+                </div>
+            </article>
+
+            <article class="card">
+                <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80" alt="Mecanica de Bomberos" class="card-img">
+                <div class="card-body">
+                    <h4><i class="fa-solid fa-boxes-stacked"></i> Mantenciones y Costos</h4>
+                    <p>Registro de pautas preventivas, reparaciones reactivas, repuestos, insumos, mano de obra y costos asociados a intervenciones mecánicas.</p>
+                    <a href="mantenciones.html" class="card-btn">Gestión de Mantenciones</a>
+                </div>
+            </article>
+
+            <article class="card">
+                <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=600&q=80" alt="Mapa georreferenciado" class="card-img">
+                <div class="card-body">
+                    <h4><i class="fa-solid fa-map-location-dot"></i> Georreferencia y Grifos</h4>
+                    <p>Visualización interactiva en mapa con la ubicación geográfica de carros, unidades, grifos de agua y puntos estratégicos en Talcahuano.</p>
+                    <a href="mapa-grifos.html" class="card-btn">Abrir Mapa Interactivo</a>
+                </div>
+            </article>
+
+            <article class="card">
+                <img src="https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=600&q=80" alt="Taller mecánico" class="card-img">
+                <div class="card-body">
+                    <h4><i class="fa-solid fa-store"></i> Talleres y Proveedores</h4>
+                    <p>Directorio de locales de reparación externos, talleres mecánicos autorizados y registro de servicios disponibles para la compañía.</p>
+                    <a href="talleres.html" class="card-btn">Consultar Talleres</a>
+                </div>
+            </article>
+
+            <article class="card">
+                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80" alt="Avisos bomberos" class="card-img">
+                <div class="card-body">
+                    <h4><i class="fa-solid fa-bullhorn"></i> Comunicados Operativos</h4>
+                    <p>Publicación de avisos importantes sobre la disponibilidad de móviles, salidas a mantención fuera de la comuna y novedades técnicas.</p>
+                    <a href="avisos.html" class="card-btn">Leer Comunicados</a>
+                </div>
+            </article>
+
+            <article class="card">
+                <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=600&q=80" alt="Login administrativo" class="card-img">
+                <div class="card-body">
+                    <h4><i class="fa-solid fa-user-shield"></i> Portal Encargados</h4>
+                    <p>Módulo con autenticación segura para administradores, comandantes y mecánicos encargados de actualizar datos y fichas técnicas.</p>
+                    <a href="login.html" class="card-btn">Iniciar Sesión</a>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>Sistema de Gestión Vehicular</h4>
+                <p>Sistema de Control y Seguimiento de Mantención de Vehículos (Proyecto APT). Desarrollado para optimizar los tiempos de respuesta e información técnica.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Enlaces Rápidos</h4>
+                <ul>
+                    <li><a href="vehiculos.html"><i class="fa-solid fa-angle-right"></i> Consulta de Vehículos</a></li>
+                    <li><a href="mantenciones.html"><i class="fa-solid fa-angle-right"></i> Historial Operativo</a></li>
+                    <li><a href="mapa-grifos.html"><i class="fa-solid fa-angle-right"></i> Mapa de Grifos</a></li>
+                    <li><a href="talleres.html"><i class="fa-solid fa-angle-right"></i> Talleres Mecánicos</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contacto Operativo</h4>
+                <p><i class="fa-solid fa-location-dot"></i> Blanco Encalada #460, Talcahuano</p>
+                <p><i class="fa-solid fa-phone"></i> +569 9393 9393</p>
+                <p><i class="fa-solid fa-envelope"></i> contacto@bomberostalcahuano.cl</p>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2026 Cuerpo de Bomberos de Talcahuano — Todos los derechos reservados.
+        </div>
+    </footer>
+
+</body>
+</html>
