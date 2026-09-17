@@ -1,111 +1,10 @@
 :host {
-  --primary: #c9302c;
-  --primary-dark: #961c19;
-  --secondary: #1a252f;
-  --accent: #f39c12;
-  --bg-light: #f8f9fa;
-  --text-dark: #2c3e50;
-  --text-light: #ffffff;
-  --success: #27ae60;
-
   display: block;
+  height: 100vh;
+  overflow-y: auto;
   background-color: var(--bg-light);
   color: var(--text-dark);
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-}
-
-/* --- BARRA SUPERIOR --- */
-.top-bar {
-  background-color: var(--primary-dark);
-  color: var(--text-light);
-  padding: 8px 5%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 0.9rem;
-  font-weight: 600;
-
-  a {
-    color: #ffda79;
-    text-decoration: none;
-  }
-}
-
-/* --- NAVBAR PRINCIPAL --- */
-.navbar {
-  background-color: var(--secondary);
-  padding: 15px 5%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--text-light);
-  text-decoration: none;
-
-  i {
-    font-size: 2rem;
-    color: var(--primary);
-  }
-}
-
-.brand-text {
-  h1 {
-    font-size: 1.2rem;
-    line-height: 1.1;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin: 0;
-    color: var(--text-light);
-  }
-
-  span {
-    font-size: 0.75rem;
-    color: #bdc3c7;
-    font-weight: normal;
-  }
-}
-
-.nav-links {
-  display: flex;
-  gap: 20px;
-  list-style: none;
-  align-items: center;
-  margin: 0;
-  padding: 0;
-
-  a {
-    color: var(--text-light);
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.95rem;
-    transition: color 0.3s ease;
-
-    &:hover {
-      color: var(--accent);
-    }
-  }
-}
-
-.btn-login {
-  background-color: var(--primary);
-  color: white !important;
-  padding: 8px 18px;
-  border-radius: 4px;
-  font-weight: 600 !important;
-  transition: background 0.3s ease !important;
-
-  &:hover {
-    background-color: var(--primary-dark) !important;
-  }
+  font-family: var(--font-base);
 }
 
 /* --- HERO PORTADA --- */
@@ -156,36 +55,11 @@
   justify-content: center;
 }
 
-.btn-main {
+/* .btn-main, .btn-primary y .btn-secondary ya están definidos en global.scss;
+   acá solo se agranda un poco el botón porque es el CTA principal del hero. */
+.hero .btn-main {
   padding: 14px 28px;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-}
-
-.btn-primary {
-  background-color: var(--primary);
-  color: white;
-}
-
-.btn-secondary {
-  background-color: transparent;
-  color: white;
-  border: 2px solid white;
-
-  &:hover {
-    background-color: white;
-    color: var(--secondary);
-  }
+  font-size: 1rem;
 }
 
 /* --- RESUMEN DE ESTADO DE FLOTA --- */
@@ -374,25 +248,4 @@ footer {
   padding-top: 20px;
   border-top: 1px solid #334155;
   font-size: 0.85rem;
-}
-
-
-:host {
-  --primary: #c9302c;
-  --primary-dark: #961c19;
-  --secondary: #1a252f;
-  --accent: #f39c12;
-  --bg-light: #f8f9fa;
-  --text-dark: #2c3e50;
-  --text-light: #ffffff;
-  --success: #27ae60;
-
-  /* AGREGAR ESTAS 2 LÍNEAS PARA HABILITAR EL SCROLL */
-  display: block;
-  height: 100vh;
-  overflow-y: auto;
-
-  background-color: var(--bg-light);
-  color: var(--text-dark);
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }

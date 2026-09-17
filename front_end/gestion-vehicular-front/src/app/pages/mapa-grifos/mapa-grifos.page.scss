@@ -1,0 +1,68 @@
+/* .page-title-bar ahora vive en global.scss para que Vehículos, Mantenciones
+   y Mapa y Grifos usen exactamente el mismo estilo. */
+
+.page-subtitle {
+  color: var(--ion-color-medium);
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.mapa-container {
+  width: 100%;
+  height: 360px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+
+  &.oculto {
+    display: none;
+  }
+}
+
+.mapa-fallback {
+  color: var(--ion-color-medium);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.puntos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.punto-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--ion-color-light, #f8f9fa);
+  border-radius: 10px;
+  padding: 12px 16px;
+
+  h4 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+  }
+
+  .descripcion {
+    font-style: italic;
+  }
+}
+
+// Marcadores personalizados por tipo de punto (ver mapa-grifos.page.ts -> iconoPara)
+::ng-deep .punto-marker span {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}

@@ -1,37 +1,35 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="danger">
-    <ion-title>Inicio Sesión</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="ion-padding auth-content">
+  <div class="auth-page">
+    <a routerLink="/index" class="auth-back"><ion-icon name="arrow-back-outline"></ion-icon> Volver al inicio</a>
 
-<ion-content class="ion-padding">
-  <div class="login-container" style="max-width: 400px; margin: 40px auto;">
-    <div class="ion-text-center ion-margin-bottom">
-      <ion-icon name="shield-checkmark-outline" size="large" color="danger" style="font-size: 64px;"></ion-icon>
-      <h2>Control Operativo</h2>
-      <p>Ingrese sus credenciales institucionales</p>
+    <div class="auth-card">
+      <div class="ion-text-center ion-margin-bottom">
+        <ion-icon name="shield-checkmark-outline" class="auth-icon"></ion-icon>
+        <h2>Control Operativo</h2>
+        <p>Ingrese sus credenciales institucionales</p>
+      </div>
+
+      <!-- Identificador (RUT o Correo) -->
+      <ion-item fill="solid" class="ion-margin-bottom">
+        <ion-input label="RUT o Correo Electrónico" labelPlacement="floating" [(ngModel)]="credentials.identificador" type="text" placeholder="ej: usuario@cuerpo.cl o 12345678-9"></ion-input>
+      </ion-item>
+
+      <!-- Contraseña -->
+      <ion-item fill="solid" class="ion-margin-bottom">
+        <ion-input label="Contraseña" labelPlacement="floating" [(ngModel)]="credentials.password" type="password" placeholder="Ingrese su contraseña"></ion-input>
+      </ion-item>
+
+      <ion-text color="danger" *ngIf="errorMessage">
+        <p class="ion-text-center">{{ errorMessage }}</p>
+      </ion-text>
+
+      <ion-button expand="block" color="danger" (click)="onLogin()" class="ion-margin-top">
+        Iniciar Sesión
+      </ion-button>
+
+      <ion-button expand="block" fill="outline" color="danger" (click)="goToRegister()" class="ion-margin-top">
+        Registrarse
+      </ion-button>
     </div>
-
-    <!-- Identificador (RUT o Correo) -->
-    <ion-item fill="solid" class="ion-margin-bottom">
-      <ion-input label="RUT o Correo Electrónico" labelPlacement="floating" [(ngModel)]="credentials.identificador" type="text" placeholder="ej: usuario@cuerpo.cl o 12345678-9"></ion-input>
-    </ion-item>
-
-    <!-- Contraseña -->
-    <ion-item fill="solid" class="ion-margin-bottom">
-      <ion-input label="Contraseña" labelPlacement="floating" [(ngModel)]="credentials.password" type="password" placeholder="Ingrese su contraseña"></ion-input>
-    </ion-item>
-
-    <ion-text color="danger" *ngIf="errorMessage">
-      <p class="ion-text-center">{{ errorMessage }}</p>
-    </ion-text>
-
-    <ion-button expand="block" color="danger" (click)="onLogin()" class="ion-margin-top">
-      Iniciar Sesión
-    </ion-button>
-
-    <ion-button expand="block" fill="outline" color="danger" (click)="goToRegister()" class="ion-margin-top">
-      Registrarse
-    </ion-button>
   </div>
 </ion-content>

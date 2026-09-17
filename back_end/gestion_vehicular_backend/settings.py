@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',  # Debe ir ANTES de 'django.contrib.admin' para que reemplace su interfaz.
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -132,3 +133,58 @@ MAILERS = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+
+# --- Jazzmin: interfaz visual mejorada para el panel de administración ---
+# https://django-jazzmin.readthedocs.io/
+JAZZMIN_SETTINGS = {
+    "site_title": "Sistema APT",
+    "site_header": "Gestión Vehicular",
+    "site_brand": "Cuerpo de Bomberos de Talcahuano",
+    "welcome_sign": "Panel de Administración — Sistema de Gestión Vehicular",
+    "copyright": "Cuerpo de Bomberos de Talcahuano",
+    "search_model": ["vehiculos.Vehiculo", "vehiculos.Mantencion"],
+    "topmenu_links": [
+        {"name": "Ver sitio público", "url": "http://localhost:8100/", "new_window": True},
+    ],
+    "icons": {
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+        "vehiculos.Vehiculo": "fas fa-truck-pickup",
+        "vehiculos.TipoVehiculo": "fas fa-tags",
+        "vehiculos.Mantencion": "fas fa-wrench",
+        "vehiculos.DetalleMantencion": "fas fa-list-check",
+        "vehiculos.CostoMantencion": "fas fa-dollar-sign",
+        "vehiculos.MantencionPersonal": "fas fa-user-gear",
+        "vehiculos.Material": "fas fa-boxes-stacked",
+        "vehiculos.Personal": "fas fa-user-tie",
+        "vehiculos.Proveedor": "fas fa-store",
+        "vehiculos.PuntoInteres": "fas fa-map-location-dot",
+        "vehiculos.Rol": "fas fa-user-shield",
+        "vehiculos.Usuario": "fas fa-address-card",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+    "show_ui_builder": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar": "navbar-dark",
+    "navbar_fixed": True,
+    "no_navbar_border": True,
+    "layout_boxed": False,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_fixed": True,
+    "sidebar_nav_small_text": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "darkly",
+    "dark_mode_theme": None,
+    "button_classes": {
+        "primary": "btn-danger",
+        "secondary": "btn-secondary",
+        "info": "btn-info",
+        "warning": "btn-warning",
+        "danger": "btn-danger",
+        "success": "btn-success",
+    },
+}

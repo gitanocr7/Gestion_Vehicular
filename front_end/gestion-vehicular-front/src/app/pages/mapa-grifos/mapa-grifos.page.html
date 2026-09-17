@@ -1,0 +1,47 @@
+<app-site-nav></app-site-nav>
+
+<div class="page-title-bar">
+  <h1><i class="fa-solid fa-map-location-dot"></i> Mapa y Grifos</h1>
+</div>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <p class="page-subtitle">
+    Consulta pública de grifos, talleres y otros puntos de interés georreferenciados.
+    No necesitas iniciar sesión para ver esta información.
+  </p>
+
+  <div class="ion-text-center ion-padding" *ngIf="cargando">
+    <ion-spinner name="crescent" color="danger"></ion-spinner>
+    <p>Cargando mapa...</p>
+  </div>
+
+  <div class="ion-text-center ion-padding" *ngIf="!cargando && errorMessage">
+    <ion-icon name="alert-circle-outline" color="danger" style="font-size: 40px;"></ion-icon>
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <div #mapaContainer class="mapa-container" [class.oculto]="!mapaDisponible"></div>
+
+  <p class="mapa-fallback" *ngIf="!mapaDisponible">
+    No se pudo cargar el componente de mapa interactivo (Leaflet). A continuación se
+    muestra el listado de puntos disponibles.
+  </p>
+
+  <div class="puntos-list" *ngIf="!cargando && !errorMessage && puntos.length > 0">
+    <div class="punto-item" *ngFor="let p of puntos">
+      <ion-chip [color]="colorChip(p.tipo)">
+        <ion-label>{{ etiquetaTipo(p.tipo) }}</ion-label>
+      </ion-chip>
+      <div>
+        <h4>{{ p.nombre }}</h4>
+        <p *ngIf="p.direccion">{{ p.direccion }}</p>
+        <p *ngIf="p.descripcion" class="descripcion">{{ p.descripcion }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="ion-text-center ion-padding" *ngIf="!cargando && !errorMessage && puntos.length === 0">
+    <ion-icon name="map-outline" color="medium" style="font-size: 40px;"></ion-icon>
+    <p>Aún no hay puntos de interés publicados.</p>
+  </div>
+</ion-content>

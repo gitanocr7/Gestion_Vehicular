@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import (
-    Rol, Usuario, TipoVehiculo, Vehiculo, Proveedor, Material, 
-    Personal, Mantencion, CostoMantencion, DetalleMantencion, MantencionPersonal
+    Rol, Usuario, TipoVehiculo, Vehiculo, Proveedor, Material,
+    Personal, Mantencion, CostoMantencion, DetalleMantencion, MantencionPersonal,
+    PuntoInteres,
 )
 
 # Registramos todos los modelos para que aparezcan en el panel de administración
@@ -16,3 +17,4 @@ admin.site.register(Mantencion)
 admin.site.register(CostoMantencion)
 admin.site.register(DetalleMantencion)
 admin.site.register(MantencionPersonal)
+admin.site.register(PuntoInteres)

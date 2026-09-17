@@ -1,16 +1,26 @@
 from rest_framework import viewsets
-from .models import Rol, Usuario, TipoVehiculo, Vehiculo, Proveedor, Material, Personal, Mantencion, CostoMantencion, DetalleMantencion, MantencionPersonal
+from .models import Rol, Usuario, TipoVehiculo, Vehiculo, Proveedor, Material, Personal, Mantencion, CostoMantencion, DetalleMantencion, MantencionPersonal, PuntoInteres
 from .serializers import (
     RolSerializer, UsuarioSerializer, TipoVehiculoSerializer, VehiculoSerializer,
     ProveedorSerializer, MaterialSerializer, PersonalSerializer, MantencionSerializer,
-    CostoMantencionSerializer, DetalleMantencionSerializer, MantencionPersonalSerializer
+    CostoMantencionSerializer, DetalleMantencionSerializer, MantencionPersonalSerializer,
+    PuntoInteresSerializer,
 )
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from .serializers import UsuarioSerializer 
+from .serializers import UsuarioSerializer
 from django.db.models import Q
+
+# Nota sobre acceso público (alcance ampliado del proyecto):
+# La consulta (listar/ver) de vehículos, mantenciones y puntos de interés es pública
+# (cualquier persona, sin necesidad de iniciar sesión), tal como se definió en las
+# historias de usuario "Como ciudadano...". El registro/edición sigue abierto en la
+# API a nivel de permisos (AllowAny) porque el control de "quién puede escribir" hoy
+# se resuelve en el frontend (rutas protegidas con authGuard); si se requiere reforzar
+# esto a nivel de API más adelante, se recomienda separar permisos de lectura/escritura
+# por rol de Usuario.
 
 class RolViewSet(viewsets.ModelViewSet):
     queryset = Rol.objects.all()
@@ -23,26 +33,53 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 class TipoVehiculoViewSet(viewsets.ModelViewSet):
     queryset = TipoVehiculo.objects.all()
     serializer_class = TipoVehiculoSerializer
+    permission_classes = [AllowAny]
 
 class VehiculoViewSet(viewsets.ModelViewSet):
-    queryset = Vehiculo.objects.all()
+    """Consulta pública de la flota (HU-02 listar, HU-03 buscar, HU-04 consultar estado,
+    HU-06 filtrar por disponibilidad). Acepta ?search=<patente/marca/modelo> y
+    ?estado=<Disponible|Mantención|Fuera de Servicio>."""
     serializer_class = VehiculoSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = Vehiculo.objects.select_related('tipo_vehiculo').all().order_by('patente')
+        search = self.request.query_params.get('search')
+        estado = self.request.query_params.get('estado')
+        if search:
+            queryset = queryset.filter(
+                Q(patente__icontains=search) | Q(marca__icontains=search) | Q(modelo__icontains=search)
+            )
+        if estado:
+            queryset = queryset.filter(estado_operativo__iexact=estado)
+        return queryset
 
 class ProveedorViewSet(viewsets.ModelViewSet):
     queryset = Proveedor.objects.all()
     serializer_class = ProveedorSerializer
+    permission_classes = [AllowAny]
 
 class MaterialViewSet(viewsets.ModelViewSet):
     queryset = Material.objects.all()
     serializer_class = MaterialSerializer
 
 class PersonalViewSet(viewsets.ModelViewSet):
+    # Registro interno del personal (bomberos/mecánicos): no es de consulta pública.
     queryset = Personal.objects.all()
     serializer_class = PersonalSerializer
 
 class MantencionViewSet(viewsets.ModelViewSet):
-    queryset = Mantencion.objects.all()
+    """Consulta pública del historial de mantenciones (HU-08). Acepta ?vehiculo=<id>
+    para ver solo las mantenciones de un vehículo."""
     serializer_class = MantencionSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = Mantencion.objects.select_related('vehiculo', 'usuario_responsable').all().order_by('-fecha_programada')
+        vehiculo_id = self.request.query_params.get('vehiculo')
+        if vehiculo_id:
+            queryset = queryset.filter(vehiculo_id=vehiculo_id)
+        return queryset
 
 class CostoMantencionViewSet(viewsets.ModelViewSet):
     queryset = CostoMantencion.objects.all()
@@ -55,6 +92,22 @@ class DetalleMantencionViewSet(viewsets.ModelViewSet):
 class MantencionPersonalViewSet(viewsets.ModelViewSet):
     queryset = MantencionPersonal.objects.all()
     serializer_class = MantencionPersonalSerializer
+
+
+class PuntoInteresViewSet(viewsets.ModelViewSet):
+    """Mapa público de grifos, talleres y otros puntos de interés (HU-13, HU-14).
+    Al público solo se le muestran los puntos marcados como publicados."""
+    serializer_class = PuntoInteresSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        queryset = PuntoInteres.objects.all().order_by('nombre')
+        tipo = self.request.query_params.get('tipo')
+        if tipo:
+            queryset = queryset.filter(tipo=tipo)
+        if not self.request.query_params.get('all'):
+            queryset = queryset.filter(publicado=True)
+        return queryset
 
 
 from django.db.models import Q

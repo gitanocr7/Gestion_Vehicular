@@ -1,0 +1,52 @@
+/* .page-title-bar ahora vive en global.scss para que Vehículos, Mantenciones
+   y Mapa y Grifos usen exactamente el mismo estilo. */
+
+.page-subtitle {
+  color: var(--ion-color-medium);
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+}
+
+.mantencion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mantencion-card {
+  background: var(--ion-color-light, #f8f9fa);
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.mantencion-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  p {
+    margin: 2px 0 0 0;
+    color: var(--ion-color-medium);
+    font-size: 0.85rem;
+  }
+}
+
+.mantencion-card-body {
+  p {
+    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+  }
+}

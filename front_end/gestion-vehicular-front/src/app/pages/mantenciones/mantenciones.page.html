@@ -1,13 +1,62 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>mantenciones</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-site-nav></app-site-nav>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">mantenciones</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<div class="page-title-bar">
+  <h1><i class="fa-solid fa-wrench"></i> Historial de Mantenciones</h1>
+</div>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <p class="page-subtitle">
+    Consulta pública de mantenciones preventivas y reactivas registradas para la flota.
+    No necesitas iniciar sesión para ver esta información.
+  </p>
+
+  <ion-item fill="solid" class="ion-margin-bottom">
+    <ion-select
+      label="Filtrar por vehículo"
+      labelPlacement="floating"
+      [value]="vehiculoSeleccionado"
+      (ionChange)="onCambioVehiculo($event)"
+      interface="popover"
+      placeholder="Todos los vehículos">
+      <ion-select-option [value]="null">Todos los vehículos</ion-select-option>
+      <ion-select-option *ngFor="let v of vehiculos" [value]="v.id">
+        {{ v.patente }} — {{ v.marca }} {{ v.modelo }}
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
+  <div class="ion-text-center ion-padding" *ngIf="cargando">
+    <ion-spinner name="crescent" color="danger"></ion-spinner>
+    <p>Cargando mantenciones...</p>
+  </div>
+
+  <div class="ion-text-center ion-padding" *ngIf="!cargando && errorMessage">
+    <ion-icon name="alert-circle-outline" color="danger" style="font-size: 40px;"></ion-icon>
+    <p>{{ errorMessage }}</p>
+    <ion-button color="danger" fill="outline" (click)="cargarMantenciones()">Reintentar</ion-button>
+  </div>
+
+  <div class="ion-text-center ion-padding" *ngIf="!cargando && !errorMessage && mantenciones.length === 0">
+    <ion-icon name="document-text-outline" color="medium" style="font-size: 40px;"></ion-icon>
+    <p>No hay mantenciones registradas para este filtro.</p>
+  </div>
+
+  <div class="mantencion-list" *ngIf="!cargando && !errorMessage && mantenciones.length > 0">
+    <div class="mantencion-card" *ngFor="let m of mantenciones">
+      <div class="mantencion-card-header">
+        <div>
+          <h3>{{ m.vehiculo_patente || ('Vehículo #' + m.vehiculo) }}</h3>
+          <p>{{ m.vehiculo_marca }} {{ m.vehiculo_modelo }} · {{ m.tipo_mantencion }}</p>
+        </div>
+        <ion-badge [color]="colorEstado(m.estado)">{{ m.estado }}</ion-badge>
+      </div>
+      <div class="mantencion-card-body">
+        <p><ion-icon name="calendar-outline"></ion-icon> Programada: {{ m.fecha_programada }}</p>
+        <p *ngIf="m.fecha_realizada"><ion-icon name="checkmark-done-outline"></ion-icon> Realizada: {{ m.fecha_realizada }}</p>
+        <p><ion-icon name="speedometer-outline"></ion-icon> Kilometraje al ingreso: {{ m.km_actual | number }} km</p>
+        <p><ion-icon name="cash-outline"></ion-icon> Costo total: {{ formatoCosto(m.costo_total) }}</p>
+        <p *ngIf="m.observaciones"><ion-icon name="chatbox-ellipses-outline"></ion-icon> {{ m.observaciones }}</p>
+      </div>
+    </div>
+  </div>
 </ion-content>

@@ -1,0 +1,99 @@
+/* Los colores (--primary, --secondary, --accent, etc.) ya están definidos
+   globalmente en global.scss, así que este componente los reutiliza tal cual
+   en vez de volver a declararlos. */
+:host {
+  display: block;
+  font-family: var(--font-base);
+}
+
+/* --- BARRA SUPERIOR --- */
+.top-bar {
+  background-color: var(--primary-dark);
+  color: var(--text-light);
+  padding: 8px 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* --- NAVBAR PRINCIPAL --- */
+.navbar {
+  background-color: var(--secondary);
+  padding: 15px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-light);
+  text-decoration: none;
+
+  i {
+    font-size: 2rem;
+    color: var(--primary);
+  }
+}
+
+.brand-text {
+  h1 {
+    font-size: 1.2rem;
+    line-height: 1.1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+    color: var(--text-light);
+  }
+
+  span {
+    font-size: 0.75rem;
+    color: #bdc3c7;
+    font-weight: normal;
+  }
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+
+  a {
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+
+    &:hover, &.active {
+      color: var(--accent);
+    }
+  }
+}
+
+.btn-login {
+  background-color: var(--primary);
+  color: white !important;
+  padding: 8px 18px;
+  border-radius: 4px;
+  font-weight: 600 !important;
+  transition: background 0.3s ease !important;
+
+  &:hover {
+    background-color: var(--primary-dark) !important;
+  }
+}

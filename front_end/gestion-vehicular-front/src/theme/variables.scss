@@ -1,2 +1,25 @@
 // For information on how to create your own theme, please refer to:
 // https://ionicframework.com/docs/theming/
+
+// --- Paleta de marca del Sistema de Gestión Vehicular ---
+// Se sobreescriben los colores "danger" y "dark" de Ionic para que todos los
+// ion-button, ion-badge, ion-spinner, ion-toolbar, etc. que usan color="danger"
+// o color="dark" en cualquier pantalla (Login, Registro, Vehículos, Mantenciones,
+// Mapa...) usen el mismo rojo/gris institucional en vez del rojo por defecto de
+// Ionic. Así el color queda consistente en toda la app sin repetirlo página por
+// página.
+:root {
+  --ion-color-danger: #c9302c;
+  --ion-color-danger-rgb: 201, 48, 44;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #961c19;
+  --ion-color-danger-tint: #d1504c;
+
+  --ion-color-dark: #1a252f;
+  --ion-color-dark-rgb: 26, 37, 47;
+  --ion-color-dark-contrast: #ffffff;
+  --ion-color-dark-contrast-rgb: 255, 255, 255;
+  --ion-color-dark-shade: #171f27;
+  --ion-color-dark-tint: #313a43;
+}
