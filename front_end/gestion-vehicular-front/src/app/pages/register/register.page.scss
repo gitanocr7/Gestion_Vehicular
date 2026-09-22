@@ -1,6 +1,161 @@
-.error-msg {
-  display: block;
-  margin-top: -10px;
-  margin-bottom: 10px;
-  padding-left: 5px;
+.auth-content {
+  // Fondo con el mismo degradado oscuro e imagen de Unsplash
+  --background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)),
+                url('https://images.unsplash.com/photo-1543165796-5426273eaab3?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+
+  .auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 24px 20px;
+  }
+
+  .auth-card {
+    background: #ffffff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    position: relative;
+    overflow: hidden;
+    padding: 24px;
+
+    .card-top-border {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background-color: #c92a2a;
+    }
+
+    .auth-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: #6c757d;
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 15px;
+
+      &:hover {
+        color: #c92a2a;
+      }
+    }
+
+    .auth-header {
+      margin-bottom: 20px;
+
+      .icon-avatar {
+        width: 64px;
+        height: 64px;
+        background-color: #fde8e8;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px;
+
+        ion-icon {
+          font-size: 32px;
+          color: #c92a2a;
+        }
+      }
+
+      h2 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin: 0 0 6px;
+      }
+
+      p {
+        font-size: 0.82rem;
+        color: #6c757d;
+        margin: 0;
+      }
+    }
+
+    .auth-form {
+      .form-group {
+        margin-bottom: 14px;
+
+        .input-label {
+          display: block;
+          font-size: 0.82rem;
+          font-weight: 600;
+          color: #333333;
+          margin-bottom: 6px;
+        }
+
+        .custom-input-container {
+          display: flex;
+          align-items: center;
+          border: 1px solid #ced4da;
+          border-radius: 8px;
+          padding: 0 12px;
+          background-color: #ffffff;
+          transition: border-color 0.2s ease;
+
+          &:focus-within {
+            border-color: #c92a2a;
+          }
+
+          .input-icon {
+            font-size: 18px;
+            color: #8c98a4;
+            margin-right: 8px;
+          }
+
+          .custom-input {
+            width: 100%;
+            border: none;
+            outline: none;
+            padding: 10px 0;
+            font-size: 0.88rem;
+            color: #333333;
+            background: transparent;
+
+            &::placeholder {
+              color: #a0aec0;
+            }
+          }
+        }
+
+        .error-msg {
+          display: block;
+          margin-top: 4px;
+          font-size: 0.75rem;
+
+          small {
+            color: #e63946;
+          }
+        }
+      }
+
+      .btn-primary {
+        --background: #c92a2a;
+        --background-hover: #a61e1e;
+        --border-radius: 8px;
+        --box-shadow: none;
+        font-weight: 600;
+        height: 42px;
+        text-transform: none;
+        margin-top: 12px;
+        margin-bottom: 8px;
+      }
+
+      .btn-secondary {
+        --background: #e9ecef;
+        --background-hover: #dee2e6;
+        --color: #212529;
+        --border-radius: 8px;
+        --box-shadow: none;
+        font-weight: 600;
+        height: 42px;
+        text-transform: none;
+      }
+    }
+  }
 }

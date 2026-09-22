@@ -1,49 +1,108 @@
-<ion-content class="ion-padding auth-content">
+<ion-content class="auth-content">
   <div class="auth-page">
-    <a routerLink="/index" class="auth-back"><ion-icon name="arrow-back-outline"></ion-icon> Volver al inicio</a>
-
     <div class="auth-card">
-      <div class="ion-text-center ion-margin-bottom">
-        <ion-icon name="person-add-outline" class="auth-icon"></ion-icon>
+      <!-- Borde superior rojo -->
+      <div class="card-top-border"></div>
+
+      <!-- Enlace para volver al inicio -->
+      <a routerLink="/index" class="auth-back">
+        <ion-icon name="arrow-back-outline"></ion-icon> Volver al inicio
+      </a>
+
+      <!-- Encabezado con Icono -->
+      <div class="ion-text-center auth-header">
+        <div class="icon-avatar">
+          <ion-icon name="person-add-outline"></ion-icon>
+        </div>
         <h2>Nuevo Usuario</h2>
         <p>Complete sus datos para registrarse</p>
       </div>
 
-      <ion-item fill="solid" class="ion-margin-bottom">
-        <ion-input label="Nombre" labelPlacement="floating" [(ngModel)]="user.nombre" type="text" (ionInput)="validarNombre()"></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="errors.nombre" class="error-msg">
-        <small>{{ errors.nombre }}</small>
-      </ion-text>
+      <!-- Formulario -->
+      <div class="auth-form">
+        <!-- Nombre -->
+        <div class="form-group">
+          <label class="input-label">Nombre</label>
+          <div class="custom-input-container">
+            <ion-icon name="person-outline" class="input-icon"></ion-icon>
+            <input 
+              type="text" 
+              [(ngModel)]="user.nombre" 
+              (input)="validarNombre()"
+              placeholder="Ingrese su nombre completo"
+              class="custom-input"
+            />
+          </div>
+          <ion-text color="danger" *ngIf="errors.nombre" class="error-msg">
+            <small>{{ errors.nombre }}</small>
+          </ion-text>
+        </div>
 
-      <ion-item fill="solid" class="ion-margin-bottom">
-        <ion-input label="Correo Electrónico" labelPlacement="floating" [(ngModel)]="user.correo" type="email" (ionInput)="validarCorreo()"></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="errors.correo" class="error-msg">
-        <small>{{ errors.correo }}</small>
-      </ion-text>
+        <!-- Correo Electrónico -->
+        <div class="form-group">
+          <label class="input-label">Correo Electrónico</label>
+          <div class="custom-input-container">
+            <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+            <input 
+              type="email" 
+              [(ngModel)]="user.correo" 
+              (input)="validarCorreo()"
+              placeholder="ejemplo@bomberostalcahuano.cl"
+              class="custom-input"
+            />
+          </div>
+          <ion-text color="danger" *ngIf="errors.correo" class="error-msg">
+            <small>{{ errors.correo }}</small>
+          </ion-text>
+        </div>
 
-      <ion-item fill="solid" class="ion-margin-bottom">
-        <ion-input label="RUT" labelPlacement="floating" [(ngModel)]="user.rut" type="text" placeholder="ej: 12345678-9 o 12.345.678-K" (ionInput)="validarRut()"></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="errors.rut" class="error-msg">
-        <small>{{ errors.rut }}</small>
-      </ion-text>
+        <!-- RUT -->
+        <div class="form-group">
+          <label class="input-label">RUT</label>
+          <div class="custom-input-container">
+            <ion-icon name="card-outline" class="input-icon"></ion-icon>
+            <input 
+              type="text" 
+              [(ngModel)]="user.rut" 
+              (input)="validarRut()"
+              placeholder="ej: 12345678-9 o 12.345.678-K"
+              class="custom-input"
+            />
+          </div>
+          <ion-text color="danger" *ngIf="errors.rut" class="error-msg">
+            <small>{{ errors.rut }}</small>
+          </ion-text>
+        </div>
 
-      <ion-item fill="solid" class="ion-margin-bottom">
-        <ion-input label="Contraseña" labelPlacement="floating" [(ngModel)]="user.password" type="password" (ionInput)="validarPassword()"></ion-input>
-      </ion-item>
-      <ion-text color="danger" *ngIf="errors.password" class="error-msg">
-        <small>{{ errors.password }}</small>
-      </ion-text>
+        <!-- Contraseña -->
+        <div class="form-group">
+          <label class="input-label">Contraseña</label>
+          <div class="custom-input-container">
+            <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+            <input 
+              type="password" 
+              [(ngModel)]="user.password" 
+              (input)="validarPassword()"
+              placeholder="Cree una contraseña"
+              class="custom-input"
+            />
+          </div>
+          <ion-text color="danger" *ngIf="errors.password" class="error-msg">
+            <small>{{ errors.password }}</small>
+          </ion-text>
+        </div>
 
-      <ion-button expand="block" color="danger" (click)="onRegister()" class="ion-margin-top">
-        Registrarse
-      </ion-button>
+        <!-- Botones de Acción -->
+        <ion-button expand="block" class="btn-primary" (click)="onRegister()">
+          <ion-icon name="person-add-outline" slot="start"></ion-icon>
+          Registrarse
+        </ion-button>
 
-      <ion-button expand="block" fill="clear" color="medium" routerLink="/login">
-        Volver al Login
-      </ion-button>
+        <ion-button expand="block" class="btn-secondary" color="medium" routerLink="/login">
+          <ion-icon name="log-in-outline" slot="start"></ion-icon>
+          Volver al Login
+        </ion-button>
+      </div>
     </div>
   </div>
 </ion-content>

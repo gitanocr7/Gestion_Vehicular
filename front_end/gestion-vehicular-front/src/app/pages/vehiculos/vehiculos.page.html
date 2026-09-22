@@ -4,59 +4,100 @@
   <h1><i class="fa-solid fa-truck-pickup"></i> Flota de Vehículos</h1>
 </div>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <p class="page-subtitle">
-    Consulta pública del estado y disponibilidad de los vehículos de emergencia.
-    No necesitas iniciar sesión para ver esta información.
-  </p>
+<ion-content [fullscreen]="true" class="ion-padding custom-content">
+  <div class="main-container">
 
-  <ion-searchbar
-    placeholder="Buscar por patente, marca o modelo..."
-    [value]="terminoBusqueda"
-    (ionInput)="onBuscar($event)"
-    debounce="400">
-  </ion-searchbar>
+    <!-- Subtítulo Informativo -->
+     <div class="info-banner">
+  <ion-icon name="information-circle-outline" class="info-banner-icon"></ion-icon>
+    <p class="page-subtitle">
+      Consulta pública del estado y disponibilidad de los vehículos de emergencia.
+      No necesitas iniciar sesión para ver esta información.
+    </p>
+</div>
 
-  <ion-segment [value]="filtroEstado" (ionChange)="onFiltroEstado($event)" scrollable="true">
-    <ion-segment-button *ngFor="let e of estados" [value]="e.value">
-      <ion-label>{{ e.label }}</ion-label>
-    </ion-segment-button>
-  </ion-segment>
 
-  <div class="ion-text-center ion-padding" *ngIf="cargando">
-    <ion-spinner name="crescent" color="danger"></ion-spinner>
-    <p>Cargando flota...</p>
-  </div>
+    <!-- Controles de Filtro -->
+    <div class="filters-container">
+      <ion-searchbar
+        placeholder="Buscar por patente, marca o modelo..."
+        [value]="terminoBusqueda"
+        (ionInput)="onBuscar($event)"
+        debounce="400"
+        class="custom-searchbar">
+      </ion-searchbar>
 
-  <div class="ion-text-center ion-padding" *ngIf="!cargando && errorMessage">
-    <ion-icon name="alert-circle-outline" color="danger" style="font-size: 40px;"></ion-icon>
-    <p>{{ errorMessage }}</p>
-    <ion-button color="danger" fill="outline" (click)="cargarVehiculos()">Reintentar</ion-button>
-  </div>
-
-  <div class="ion-text-center ion-padding" *ngIf="!cargando && !errorMessage && vehiculos.length === 0">
-    <ion-icon name="search-outline" color="medium" style="font-size: 40px;"></ion-icon>
-    <p>No se encontraron vehículos con los criterios seleccionados.</p>
-    <ion-button fill="clear" color="danger" (click)="limpiarFiltro()">Limpiar filtros</ion-button>
-  </div>
-
-  <div class="vehiculos-grid" *ngIf="!cargando && !errorMessage && vehiculos.length > 0">
-    <div class="vehiculo-card" *ngFor="let v of vehiculos">
-      <div class="vehiculo-card-header">
-        <div>
-          <h3>{{ v.patente }}</h3>
-          <p>{{ v.marca }} {{ v.modelo }} · {{ v.anio }}</p>
-        </div>
-        <ion-badge [color]="colorEstado(v.estado_operativo)">{{ v.estado_operativo }}</ion-badge>
-      </div>
-      <div class="vehiculo-card-body">
-        <p><ion-icon name="pricetag-outline"></ion-icon> Tipo: {{ v.tipo_vehiculo_nombre || 'No especificado' }}</p>
-        <p><ion-icon name="speedometer-outline"></ion-icon> Kilometraje: {{ v.kilometraje | number }} km</p>
-        <p><ion-icon name="calendar-outline"></ion-icon> Adquisición: {{ v.fecha_adquisicion }}</p>
-      </div>
-      <a class="vehiculo-card-link" [routerLink]="['/mantenciones']" [queryParams]="{ vehiculo: v.id }">
-        Ver historial de mantenciones <ion-icon name="arrow-forward-outline"></ion-icon>
-      </a>
+      <ion-segment [value]="filtroEstado" (ionChange)="onFiltroEstado($event)" scrollable="true" class="custom-segment">
+        <ion-segment-button *ngFor="let e of estados" [value]="e.value">
+          <ion-label>{{ e.label }}</ion-label>
+        </ion-segment-button>
+      </ion-segment>
     </div>
+
+    <!-- Estado: Cargando -->
+    <div class="state-container" *ngIf="cargando">
+      <ion-spinner name="crescent" color="danger"></ion-spinner>
+      <p>Cargando flota de vehículos...</p>
+    </div>
+
+    <!-- Estado: Error -->
+    <div class="state-container" *ngIf="!cargando && errorMessage">
+      <div class="state-icon-wrapper danger">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+      </div>
+      <p class="state-message">{{ errorMessage }}</p>
+      <ion-button color="danger" fill="outline" (click)="cargarVehiculos()" shape="round">
+        Reintentar
+      </ion-button>
+    </div>
+
+    <!-- Estado: Sin Resultados -->
+    <div class="state-container" *ngIf="!cargando && !errorMessage && vehiculos.length === 0">
+      <div class="state-icon-wrapper medium">
+        <ion-icon name="search-outline"></ion-icon>
+      </div>
+      <p class="state-message">No se encontraron vehículos con los criterios seleccionados.</p>
+      <ion-button fill="clear" color="danger" (click)="limpiarFiltro()">
+        Limpiar filtros
+      </ion-button>
+    </div>
+
+    <!-- Grid de Vehículos -->
+    <div class="vehiculos-grid" *ngIf="!cargando && !errorMessage && vehiculos.length > 0">
+      <div class="vehiculo-card" *ngFor="let v of vehiculos">
+        
+        <div class="vehiculo-card-header">
+          <div class="vehiculo-info-principal">
+            <h3 class="patente">{{ v.patente }}</h3>
+            <p class="modelo-anio">{{ v.marca }} {{ v.modelo }} <span class="dot">•</span> {{ v.anio }}</p>
+          </div>
+          <ion-badge [color]="colorEstado(v.estado_operativo)" class="status-badge">
+            {{ v.estado_operativo }}
+          </ion-badge>
+        </div>
+
+        <div class="vehiculo-card-body">
+          <div class="detail-row">
+            <div class="icon-box"><ion-icon name="pricetag-outline"></ion-icon></div>
+            <span><strong>Tipo:</strong> {{ v.tipo_vehiculo_nombre || 'No especificado' }}</span>
+          </div>
+          <div class="detail-row">
+            <div class="icon-box"><ion-icon name="speedometer-outline"></ion-icon></div>
+            <span><strong>Kilometraje:</strong> {{ v.kilometraje | number }} km</span>
+          </div>
+          <div class="detail-row">
+            <div class="icon-box"><ion-icon name="calendar-outline"></ion-icon></div>
+            <span><strong>Adquisición:</strong> {{ v.fecha_adquisicion }}</span>
+          </div>
+        </div>
+
+        <a class="vehiculo-card-link" [routerLink]="['/mantenciones']" [queryParams]="{ vehiculo: v.id }">
+          <span>Ver historial de mantenciones</span>
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </a>
+
+      </div>
+    </div>
+
   </div>
 </ion-content>

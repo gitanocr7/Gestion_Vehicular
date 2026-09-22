@@ -5,10 +5,15 @@
 </div>
 
 <ion-content [fullscreen]="true" class="ion-padding">
+
+  <div class="info-banner">
+  <ion-icon name="information-circle-outline" class="info-banner-icon"></ion-icon>
   <p class="page-subtitle">
     Consulta pública de grifos, talleres y otros puntos de interés georreferenciados.
     No necesitas iniciar sesión para ver esta información.
   </p>
+</div>
+
 
   <div class="ion-text-center ion-padding" *ngIf="cargando">
     <ion-spinner name="crescent" color="danger"></ion-spinner>
