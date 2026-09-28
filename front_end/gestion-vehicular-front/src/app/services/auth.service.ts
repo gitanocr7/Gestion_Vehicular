@@ -7,8 +7,9 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  private loginUrl = `${environment.apiUrl}login/`;
-  private registerUrl = `${environment.apiUrl}registro/`;
+  // Se agrega la / entre apiUrl y el endpoint
+  private loginUrl = `${environment.apiUrl}/login/`;
+  private registerUrl = `${environment.apiUrl}/registro/`;
 
   constructor(private http: HttpClient) {}
 
