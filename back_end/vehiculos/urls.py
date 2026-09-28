@@ -23,7 +23,7 @@ router.register(r'mantencion-personal', MantencionPersonalViewSet)
 router.register(r'puntos-interes', PuntoInteresViewSet, basename='punto-interes')
 
 urlpatterns = [
-    path('api/', include(router.urls)),
-    path('api/login/', login_view, name='login'),
-    path('api/registro/', registrar_usuario, name='registro'), 
+    path('', include(router.urls)),
+    path('login/', login_view, name='login'),
+    path('registro/', registrar_usuario, name='registro'),
 ]
