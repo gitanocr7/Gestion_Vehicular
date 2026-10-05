@@ -1,0 +1,145 @@
+<app-site-nav></app-site-nav>
+
+<div class="page-title-bar">
+  <h1><i class="fa-solid fa-wrench"></i> Talleres Disponibles</h1>
+</div>
+
+<ion-content [fullscreen]="true" class="ion-padding custom-content">
+  <div class="main-container">
+
+    <!-- Banner Informativo -->
+    <div class="info-banner">
+      <ion-icon name="information-circle-outline" class="info-banner-icon"></ion-icon>
+      <p class="page-subtitle">
+        Consulta y filtra los talleres mecánicos disponibles en convenio para la flota de emergencia.
+      </p>
+    </div>
+
+    <!-- Buscador Principal -->
+    <div class="search-container">
+      <ion-searchbar
+        placeholder="Buscar por nombre, dirección o especialidad..."
+        [value]="terminoBusqueda"
+        (ionInput)="onBuscar($event)"
+        debounce="300"
+        class="custom-searchbar">
+      </ion-searchbar>
+    </div>
+
+    <!-- Filtro desplegable idéntico a la imagen -->
+    <div class="controls-row">
+      <div class="filter-dropdown-container">
+        <ion-item lines="none" class="custom-select-item">
+          <ion-label position="stacked" class="select-label">Filtrar por tipo de mantención:</ion-label>
+          <ion-select 
+            [value]="tipoMantencion" 
+            (ionChange)="onCambiarTipoMantencion($event)" 
+            interface="action-sheet" 
+            placeholder="Seleccionar área">
+            
+            <ion-select-option value="todas">Todas las categorías</ion-select-option>
+            
+            <!-- Motor y Componentes -->
+            <ion-select-option value="motor">Motor y Afinamiento</ion-select-option>
+            <ion-select-option value="aceite">Cambio de Aceite y Filtros</ion-select-option>
+            <ion-select-option value="distribucion">Correa / Kit de Distribución</ion-select-option>
+            <ion-select-option value="refrigeracion">Sistema de Refrigeración / Radiador</ion-select-option>
+
+            <!-- Frenos y Seguridad -->
+            <ion-select-option value="frenos">Sistema de Frenos (Pastillas/Discos)</ion-select-option>
+            <ion-select-option value="abs">Frenos ABS y Control de Estabilidad</ion-select-option>
+
+            <!-- Suspensión y Dirección -->
+            <ion-select-option value="suspension">Suspensión y Amortiguadores</ion-select-option>
+            <ion-select-option value="direccion">Dirección y Alineación</ion-select-option>
+            <ion-select-option value="neumaticos">Neumáticos / Balanceo / Rotación</ion-select-option>
+
+            <!-- Transmisión y Tren Motriz -->
+            <ion-select-option value="transmision">Caja de Cambios y Transmisión</ion-select-option>
+            <ion-select-option value="embrague">Embrague / Clotche</ion-select-option>
+
+            <!-- Eléctrico y Electrónica -->
+            <ion-select-option value="electrico">Sistema Eléctrico y Batería</ion-select-option>
+            <ion-select-option value="iluminacion">Luces de Emergencia / Sirenas / Balizas</ion-select-option>
+
+            <!-- Mantenimiento de Equipamiento Especial -->
+            <ion-select-option value="bomba">Bomba de Agua / Hidráulica</ion-select-option>
+
+            <!-- Preventivo e Inspección -->
+            <ion-select-option value="revision">Revisión Técnica y Emisiones</ion-select-option>
+            <ion-select-option value="preventiva">Mantención Preventiva General</ion-select-option>
+            <ion-select-option value="correctiva">Reparación Correctiva / Siniestros</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+    </div>
+
+    <!-- Estado: Cargando -->
+    <div class="state-container" *ngIf="cargando">
+      <ion-spinner name="crescent" color="danger"></ion-spinner>
+      <p>Cargando talleres...</p>
+    </div>
+
+    <!-- Estado: Error -->
+    <div class="state-container" *ngIf="!cargando && errorMessage">
+      <div class="state-icon-wrapper danger">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+      </div>
+      <p class="state-message">{{ errorMessage }}</p>
+      <ion-button color="danger" fill="outline" (click)="cargarTalleres()" shape="round">
+        Reintentar
+      </ion-button>
+    </div>
+
+    <!-- Estado: Sin Resultados -->
+    <div class="state-container" *ngIf="!cargando && !errorMessage && talleresFiltrados.length === 0">
+      <div class="state-icon-wrapper medium">
+        <ion-icon name="search-outline"></ion-icon>
+      </div>
+      <p class="state-message">No se encontraron talleres con los criterios seleccionados.</p>
+      <ion-button fill="clear" color="danger" (click)="limpiarFiltro()">
+        Limpiar filtros
+      </ion-button>
+    </div>
+
+    <!-- Grid de Talleres -->
+    <div class="talleres-grid" *ngIf="!cargando && !errorMessage && talleresFiltrados.length > 0">
+      <div class="taller-card" *ngFor="let t of talleresFiltrados">
+        
+        <div class="taller-card-header">
+          <div class="taller-info-principal">
+            <h3 class="nombre-taller">{{ t.nombre }}</h3>
+            <p class="especialidad">Especialidad: <strong>{{ t.especialidad }}</strong></p>
+          </div>
+          <ion-badge [color]="t.disponible ? 'success' : 'medium'" class="status-badge">
+            {{ t.disponible ? 'Disponible' : 'Ocupado' }}
+          </ion-badge>
+        </div>
+
+        <div class="taller-card-body">
+          <div class="detail-row">
+            <div class="icon-box"><ion-icon name="location-outline"></ion-icon></div>
+            <span><strong>Dirección:</strong> {{ t.direccion }}</span>
+          </div>
+
+          <div class="detail-row" *ngIf="t.telefono">
+            <div class="icon-box"><ion-icon name="call-outline"></ion-icon></div>
+            <span><strong>Teléfono:</strong> {{ t.telefono }}</span>
+          </div>
+
+          <div class="detail-row" *ngIf="t.capacidad_vehiculos">
+            <div class="icon-box"><ion-icon name="car-sport-outline"></ion-icon></div>
+            <span><strong>Capacidad:</strong> {{ t.vehiculos_actuales || 0 }} / {{ t.capacidad_vehiculos }} ocupados</span>
+          </div>
+        </div>
+
+        <a class="taller-card-link" [routerLink]="['/mantenciones']" [queryParams]="{ taller: t.id }">
+          <span>Ver órdenes de trabajo</span>
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+</ion-content>
