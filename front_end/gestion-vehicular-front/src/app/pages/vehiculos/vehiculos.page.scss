@@ -11,7 +11,7 @@
 }
 
 .info-banner {
-  background: var(--ion-color-light, #f8f9fa);
+  background: #e4e4e4;
   border-left: 4px solid var(--ion-color-danger, #eb445a); /* Borde acentuado con el color del tema */
   border-radius: 8px;
   padding: 12px 16px;
@@ -44,7 +44,7 @@
 }
 
 .custom-searchbar {
-  --background: #ffffff;
+  --background: #e4e4e4;
   --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   --border-radius: 12px;
   --padding-start: 0;
@@ -52,14 +52,14 @@
 }
 
 .custom-segment {
-  background: #ffffff;
+  background: #e4e4e4;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
   padding: 4px;
 
   ion-segment-button {
     --indicator-color: var(--ion-color-danger, #eb445a);
-    --color-checked: #ffffff;
+    --color-checked: #000000;
     --border-radius: 8px;
     font-weight: 500;
     font-size: 0.85rem;
@@ -74,7 +74,7 @@
   justify-content: center;
   padding: 48px 16px;
   text-align: center;
-  background: #ffffff;
+  background: #e4e4e4;
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
   margin-top: 16px;

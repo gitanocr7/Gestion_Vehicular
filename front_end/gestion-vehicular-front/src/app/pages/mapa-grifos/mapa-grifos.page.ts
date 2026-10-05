@@ -6,7 +6,7 @@ import {
 import { PuntosInteresService, PuntoInteres } from '../../services/puntos-interes.service';
 import { SiteNavComponent } from '../../shared/site-nav/site-nav.component';
 
-// Leaflet se carga vía CDN en src/index.html (ver <script src=".../leaflet.min.js">).
+// Leaflet se carga vía CDN en src/index.html
 declare const L: any;
 
 /**
@@ -28,9 +28,10 @@ export class MapaGrifosPage implements OnInit, AfterViewInit {
   errorMessage = '';
   mapaDisponible = typeof L !== 'undefined';
 
-  // Centro por defecto: Talcahuano, Región del Biobío.
-  private readonly centroDefecto: [number, number] = [-36.7226, -73.1167];
+  // Centro por defecto: Santiago, Región Metropolitana
+  private readonly centroDefecto: [number, number] = [-33.4489, -70.6693];
   private mapa: any;
+  private markersGroup: any;
 
   constructor(
     private puntosInteresService: PuntosInteresService,
@@ -55,13 +56,11 @@ export class MapaGrifosPage implements OnInit, AfterViewInit {
         this.puntos = data;
         this.cargando = false;
         this.pintarMarcadores();
-        // La app corre en modo "zoneless" (sin zone.js): hay que pedir explícitamente
-        // que se vuelva a renderizar la vista cuando llegan datos de forma asíncrona.
         this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Error al cargar puntos de interés:', err);
-        this.errorMessage = 'No se pudo cargar el mapa de grifos y puntos de interés. Verifique que el servidor esté disponible.';
+        this.errorMessage = 'No se pudo cargar el mapa de grifos y puntos de interés.';
         this.cargando = false;
         this.cdr.markForCheck();
       }
@@ -69,30 +68,59 @@ export class MapaGrifosPage implements OnInit, AfterViewInit {
   }
 
   private inicializarMapa() {
-    this.mapa = L.map(this.mapaContainer!.nativeElement).setView(this.centroDefecto, 14);
+    if (this.mapa) return;
+
+    // Inicialización centrada en Santiago (-33.4489, -70.6693)
+    this.mapa = L.map(this.mapaContainer!.nativeElement).setView(this.centroDefecto, 13);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; colaboradores de OpenStreetMap',
       maxZoom: 19,
     }).addTo(this.mapa);
+
+    // Capa de marcadores dedicada para facilitarle la limpieza antes de redibujar
+    this.markersGroup = L.layerGroup().addTo(this.mapa);
+
     this.pintarMarcadores();
+
+    // Reajusta el tamaño del canvas de Leaflet tras el renderizado de Ionic
+    setTimeout(() => {
+      if (this.mapa) {
+        this.mapa.invalidateSize();
+      }
+    }, 200);
   }
 
   private pintarMarcadores() {
-    if (!this.mapa || !this.puntos.length) return;
+    if (!this.mapa || !this.markersGroup || !this.puntos.length) return;
+
+    // Limpia marcadores previos antes de agregar los nuevos
+    this.markersGroup.clearLayers();
+
+    const bounds: [number, number][] = [];
 
     this.puntos.forEach((punto) => {
       const lat = Number(punto.latitud);
       const lng = Number(punto.longitud);
       if (Number.isNaN(lat) || Number.isNaN(lng)) return;
 
+      bounds.push([lat, lng]);
+
       const icono = this.iconoPara(punto.tipo);
-      const marcador = L.marker([lat, lng], { icon: icono }).addTo(this.mapa);
+      const marcador = L.marker([lat, lng], { icon: icono });
       marcador.bindPopup(
         `<strong>${punto.nombre}</strong><br>${this.etiquetaTipo(punto.tipo)}` +
         (punto.direccion ? `<br>${punto.direccion}` : '') +
         (punto.descripcion ? `<br><em>${punto.descripcion}</em>` : '')
       );
+
+      this.markersGroup.addLayer(marcador);
     });
+
+    // Ajusta la vista del mapa si hay marcadores válidos cargados
+    if (bounds.length > 0) {
+      this.mapa.fitBounds(bounds, { padding: [30, 30] });
+    }
   }
 
   private iconoPara(tipo: string) {
