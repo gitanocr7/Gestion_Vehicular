@@ -49,20 +49,25 @@
 
       /* Ejemplo en tono verde amigable */
 .icon-avatar {
-  width: 64px;
-  height: 64px;
-  background-color: #e6fcf5; /* Verde claro */
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 12px;
+        width: 64px;
+        height: 64px;
+        background-color: #fde8e8; /* Color de fondo del círculo */
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px;
 
-  ion-icon {
-    font-size: 32px;
-    color: #0ca678; /* Verde */
-  }
-}
+        ion-icon {
+          font-size: 32px;
+          color: #c92a2a; /* Color de la carita feliz */
+
+          /* --- ESTO ES LO QUE ARREGLA EL PROBLEMA --- */
+          fill: none; /* Elimina cualquier relleno que oculte la cara */
+          stroke: currentColor; /* Fuerza a que las líneas usen el color definido arriba */
+          stroke-width: 32px; /* (Opcional) Ajusta el grosor de las líneas si lo necesitas */
+        }
+      }
 
       h2 {
         font-size: 1.4rem;
