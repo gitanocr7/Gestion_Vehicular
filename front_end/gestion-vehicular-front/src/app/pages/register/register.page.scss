@@ -58,15 +58,7 @@
         justify-content: center;
         margin: 0 auto 12px;
 
-        ion-icon {
-          font-size: 32px;
-          color: #c92a2a; /* Color de la carita feliz */
-
-          /* --- ESTO ES LO QUE ARREGLA EL PROBLEMA --- */
-          fill: none; /* Elimina cualquier relleno que oculte la cara */
-          stroke: currentColor; /* Fuerza a que las líneas usen el color definido arriba */
-          stroke-width: 32px; /* (Opcional) Ajusta el grosor de las líneas si lo necesitas */
-        }
+        
       }
 
       h2 {
