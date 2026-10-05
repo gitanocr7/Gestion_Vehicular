@@ -42,6 +42,10 @@ export const routes: Routes = [
     path: 'register',
     loadComponent: () => import('./pages/register/register.page').then( m => m.RegisterPage)
   },
+    {
+    path: 'talleres',
+    loadComponent: () => import('./pages/talleres/talleres.page').then( m => m.TalleresPage)
+  },
   {
     // 'talleres' y 'avisos' aparecen en la navegación (índice/footer) pero sus páginas
     // todavía no están implementadas (quedan como trabajo pendiente, ver Product Backlog
@@ -49,5 +53,6 @@ export const routes: Routes = [
     // ruta desconocida vuelve al inicio en vez de mostrar una pantalla en blanco.
     path: '**',
     redirectTo: 'index'
-  }
+  },
+
 ];
