@@ -1,38 +1,32 @@
 <app-site-nav></app-site-nav>
 
 <div class="page-title-bar">
-  <h1><i class="fa-solid fa-map-location-dot"></i> Mapa y Grifos</h1>
+  <h1><i class="fa-solid fa-map-location-dot"></i> Mapa y Grifos Bomberos</h1>
 </div>
 
 <ion-content [fullscreen]="true" class="ion-padding">
 
   <div class="info-banner">
-  <ion-icon name="information-circle-outline" class="info-banner-icon"></ion-icon>
-  <p class="page-subtitle">
-    Consulta pública de grifos, talleres y otros puntos de interés georreferenciados.
-    No necesitas iniciar sesión para ver esta información.
-  </p>
-</div>
-
-
-  <div class="ion-text-center ion-padding" *ngIf="cargando">
-    <ion-spinner name="crescent" color="danger"></ion-spinner>
-    <p>Cargando mapa...</p>
+    <ion-icon name="information-circle-outline" class="info-banner-icon"></ion-icon>
+    <p class="page-subtitle">
+      Visor oficial del Sistema de Información Geográfica (SIG) de Bomberos de Chile.
+      Puedes interactuar directamente con el mapa a continuación.
+    </p>
   </div>
 
-  <div class="ion-text-center ion-padding" *ngIf="!cargando && errorMessage">
-    <ion-icon name="alert-circle-outline" color="danger" style="font-size: 40px;"></ion-icon>
-    <p>{{ errorMessage }}</p>
+  <!-- Contenedor del Visor SIG Bomberos de Chile -->
+  <div class="iframe-container">
+    <iframe 
+      [src]="mapaBomberosUrl" 
+      title="Mapa SIG Bomberos de Chile" 
+      allow="geolocation" 
+      allowfullscreen>
+    </iframe>
   </div>
 
-  <div #mapaContainer class="mapa-container" [class.oculto]="!mapaDisponible"></div>
-
-  <p class="mapa-fallback" *ngIf="!mapaDisponible">
-    No se pudo cargar el componente de mapa interactivo (Leaflet). A continuación se
-    muestra el listado de puntos disponibles.
-  </p>
-
-  <div class="puntos-list" *ngIf="!cargando && !errorMessage && puntos.length > 0">
+  <!-- Listado complementario de puntos (si tu backend posee datos) -->
+  <div class="puntos-list" *ngIf="puntos.length > 0">
+    <h3>Otros Puntos Registrados</h3>
     <div class="punto-item" *ngFor="let p of puntos">
       <ion-chip [color]="colorChip(p.tipo)">
         <ion-label>{{ etiquetaTipo(p.tipo) }}</ion-label>
@@ -45,8 +39,4 @@
     </div>
   </div>
 
-  <div class="ion-text-center ion-padding" *ngIf="!cargando && !errorMessage && puntos.length === 0">
-    <ion-icon name="map-outline" color="medium" style="font-size: 40px;"></ion-icon>
-    <p>Aún no hay puntos de interés publicados.</p>
-  </div>
 </ion-content>

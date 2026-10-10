@@ -1,5 +1,3 @@
-
-
 .info-banner {
   background: #e4e4e4;
   border-left: 4px solid var(--ion-color-danger, #eb445a); 
@@ -25,28 +23,32 @@
   }
 }
 
-.mapa-container {
+.iframe-container {
   width: 100%;
-  height: 360px;
-  border-radius: 10px;
+  height: 620px;
+  border-radius: 12px;
   overflow: hidden;
-  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  margin-bottom: 20px;
+  background: #f4f4f4;
 
-  &.oculto {
-    display: none;
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
   }
-}
-
-.mapa-fallback {
-  color: var(--ion-color-medium);
-  font-size: 0.85rem;
-  font-style: italic;
 }
 
 .puntos-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
 }
 
 .punto-item {
@@ -72,14 +74,4 @@
   .descripcion {
     font-style: italic;
   }
-}
-
-// Marcadores personalizados por tipo de punto (ver mapa-grifos.page.ts -> iconoPara)
-::ng-deep .punto-marker span {
-  display: block;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
 }
