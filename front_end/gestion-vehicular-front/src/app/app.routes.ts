@@ -11,26 +11,30 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
-      import('./pages/login/login.page')
-        .then(m => m.LoginPage)
+      import('./pages/login/login.page').then(m => m.LoginPage)
   },
   {
     path: 'index',
     loadComponent: () =>
-      import('./pages/index/index.page')
-        .then(m => m.IndexPage)
+      import('./pages/index/index.page').then(m => m.IndexPage)
   },
   {
     path: 'vehiculos',
     loadComponent: () =>
-      import('./pages/vehiculos/vehiculos.page')
-        .then(m => m.VehiculosPage)
+      import('./pages/vehiculos/vehiculos.page').then(m => m.VehiculosPage)
   },
   {
     path: 'mantenciones',
     loadComponent: () =>
       import('./pages/mantenciones/mantenciones.page')
         .then(m => m.MantencionesPage),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'mantenciones/crear',
+    loadComponent: () =>
+      import('./pages/mantenciones/crear-mantencion.page')
+        .then(m => m.CrearMantencionPage),
     canActivate: [authGuard]
   },
   {
@@ -42,21 +46,18 @@ export const routes: Routes = [
   {
     path: 'personal',
     loadComponent: () =>
-      import('./pages/personal/personal.page')
-        .then(m => m.PersonalPage),
+      import('./pages/personal/personal.page').then(m => m.PersonalPage),
     canActivate: [authGuard]
   },
   {
     path: 'register',
     loadComponent: () =>
-      import('./pages/register/register.page')
-        .then(m => m.RegisterPage)
+      import('./pages/register/register.page').then(m => m.RegisterPage)
   },
   {
     path: 'talleres',
     loadComponent: () =>
-      import('./pages/talleres/talleres.page')
-        .then(m => m.TalleresPage)
+      import('./pages/talleres/talleres.page').then(m => m.TalleresPage)
   },
   {
     path: '**',

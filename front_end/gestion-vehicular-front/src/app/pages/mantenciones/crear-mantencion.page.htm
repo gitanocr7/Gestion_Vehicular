@@ -1,0 +1,188 @@
+
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelar()">
+        <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+        Volver
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>Registrar Mantención</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="form-container">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Nueva mantención</ion-card-title>
+        <ion-card-subtitle>
+          Completa los datos de la intervención del vehículo.
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form (ngSubmit)="guardar()" #formMantencion="ngForm">
+
+          <ion-list lines="full">
+
+            <ion-item>
+              <ion-select
+                label="Vehículo"
+                labelPlacement="stacked"
+                name="vehiculo"
+                [(ngModel)]="formulario.vehiculo"
+                placeholder="Selecciona un vehículo"
+                interface="popover"
+                required>
+                <ion-select-option
+                  *ngFor="let vehiculo of vehiculos"
+                  [value]="vehiculo.id">
+                  {{ vehiculo.patente }} -
+                  {{ vehiculo.marca }} {{ vehiculo.modelo }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-select
+                label="Responsable"
+                labelPlacement="stacked"
+                name="usuario_responsable"
+                [(ngModel)]="formulario.usuario_responsable"
+                placeholder="Selecciona un responsable"
+                interface="popover"
+                required>
+                <ion-select-option
+                  *ngFor="let usuario of usuarios"
+                  [value]="usuario.id">
+                  {{ usuario.nombre }}
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-select
+                label="Tipo de mantención"
+                labelPlacement="stacked"
+                name="tipo_mantencion"
+                [(ngModel)]="formulario.tipo_mantencion"
+                required>
+                <ion-select-option value="Preventiva">
+                  Preventiva
+                </ion-select-option>
+                <ion-select-option value="Reactiva">
+                  Reactiva
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-input
+                label="Fecha programada"
+                labelPlacement="stacked"
+                type="date"
+                name="fecha_programada"
+                [(ngModel)]="formulario.fecha_programada"
+                required>
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-input
+                label="Fecha realizada (opcional)"
+                labelPlacement="stacked"
+                type="date"
+                name="fecha_realizada"
+                [(ngModel)]="formulario.fecha_realizada">
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-select
+                label="Estado"
+                labelPlacement="stacked"
+                name="estado"
+                [(ngModel)]="formulario.estado"
+                required>
+                <ion-select-option value="Pendiente">
+                  Pendiente
+                </ion-select-option>
+                <ion-select-option value="En proceso">
+                  En proceso
+                </ion-select-option>
+                <ion-select-option value="Completada">
+                  Completada
+                </ion-select-option>
+                <ion-select-option value="Cancelada">
+                  Cancelada
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-input
+                label="Kilometraje actual"
+                labelPlacement="stacked"
+                type="number"
+                name="km_actual"
+                min="0"
+                [(ngModel)]="formulario.km_actual"
+                required>
+              </ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-textarea
+                label="Observaciones"
+                labelPlacement="stacked"
+                name="observaciones"
+                [(ngModel)]="formulario.observaciones"
+                placeholder="Describe los trabajos o problemas detectados"
+                rows="4"
+                autoGrow="true">
+              </ion-textarea>
+            </ion-item>
+
+            <ion-item>
+              <ion-input
+                label="Costo total (CLP)"
+                labelPlacement="stacked"
+                type="number"
+                name="costo_total"
+                min="0"
+                [(ngModel)]="formulario.costo_total"
+                required>
+              </ion-input>
+            </ion-item>
+
+          </ion-list>
+
+          <div class="form-actions">
+            <ion-button
+              type="submit"
+              expand="block"
+              [disabled]="guardando || formMantencion.invalid">
+              <ion-icon
+                name="save-outline"
+                slot="start">
+              </ion-icon>
+              {{ guardando ? 'Guardando...' : 'Guardar mantención' }}
+            </ion-button>
+
+            <ion-button
+              type="button"
+              expand="block"
+              fill="outline"
+              color="medium"
+              (click)="cancelar()">
+              Cancelar
+            </ion-button>
+          </div>
+
+        </form>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
