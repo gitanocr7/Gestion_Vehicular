@@ -1,37 +1,76 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="danger">
-    <ion-title>Inicio Sesión</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content class="auth-content">
+  <div class="auth-page">
+    <div class="auth-card">
+      <!-- Borde superior rojo -->
+      <div class="card-top-border"></div>
 
-<ion-content class="ion-padding">
-  <div class="login-container" style="max-width: 400px; margin: 40px auto;">
-    <div class="ion-text-center ion-margin-bottom">
-      <ion-icon name="shield-checkmark-outline" size="large" color="danger" style="font-size: 64px;"></ion-icon>
-      <h2>Control Operativo</h2>
-      <p>Ingrese sus credenciales institucionales</p>
+      <a routerLink="/index" class="auth-back">
+        <ion-icon name="arrow-back-outline"></ion-icon> Volver al inicio
+      </a>
+
+      <!-- Encabezado con Icono -->
+      <div class="ion-text-center auth-header">
+        <div class="icon-avatar">
+          <ion-icon name="person-circle-outline"></ion-icon>
+        </div>
+        <h2>Acceso Restringido</h2>
+        <p>Ingrese sus credenciales autorizadas del Cuerpo de Bomberos</p>
+      </div>
+
+      <!-- Formulario -->
+      <div class="auth-form">
+        <!-- Identificador (RUT o Correo) -->
+        <div class="form-group">
+          <label class="input-label">Nombre de usuario o Correo</label>
+          <div class="custom-input-container">
+            <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+            <input 
+              type="text" 
+              [(ngModel)]="credentials.identificador" 
+              placeholder="ejemplo@bomberostalcahuano.cl o usuario"
+              class="custom-input"
+            />
+          </div>
+        </div>
+
+        <!-- Contraseña -->
+        <div class="form-group">
+          <label class="input-label">Contraseña</label>
+          <div class="custom-input-container">
+            <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+            <input 
+              type="password" 
+              [(ngModel)]="credentials.password" 
+              placeholder="••••••••"
+              class="custom-input"
+            />
+          </div>
+        </div>
+
+        <!-- Opciones adicionales -->
+        <div class="form-options">
+          <label class="remember-me">
+            <input type="checkbox" /> Recordar mi cuenta
+          </label>
+          <a href="#" class="forgot-password" (click)="$event.preventDefault()">¿Olvidó su contraseña?</a>
+        </div>
+
+        <!-- Mensaje de error -->
+        <ion-text color="danger" *ngIf="errorMessage">
+          <p class="error-message ion-text-center">{{ errorMessage }}</p>
+        </ion-text>
+
+        <!-- Botones de Acción -->
+        <ion-button expand="block" class="btn-primary" (click)="onLogin()">
+          <ion-icon name="log-in-outline" slot="start"></ion-icon>
+          Iniciar Sesión
+        </ion-button>
+
+        <ion-button expand="block" class="btn-secondary" color="medium" (click)="goToRegister()">
+          <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+          Registrarse
+        </ion-button>
+      </div>
     </div>
-
-    <!-- Identificador (RUT o Correo) -->
-    <ion-item fill="solid" class="ion-margin-bottom">
-      <ion-input label="RUT o Correo Electrónico" labelPlacement="floating" [(ngModel)]="credentials.identificador" type="text" placeholder="ej: usuario@cuerpo.cl o 12345678-9"></ion-input>
-    </ion-item>
-
-    <!-- Contraseña -->
-    <ion-item fill="solid" class="ion-margin-bottom">
-      <ion-input label="Contraseña" labelPlacement="floating" [(ngModel)]="credentials.password" type="password" placeholder="Ingrese su contraseña"></ion-input>
-    </ion-item>
-
-    <ion-text color="danger" *ngIf="errorMessage">
-      <p class="ion-text-center">{{ errorMessage }}</p>
-    </ion-text>
-
-    <ion-button expand="block" color="danger" (click)="onLogin()" class="ion-margin-top">
-      Iniciar Sesión
-    </ion-button>
-
-    <ion-button expand="block" fill="outline" color="danger" (click)="goToRegister()" class="ion-margin-top">
-      Registrarse
-    </ion-button>
   </div>
 </ion-content>

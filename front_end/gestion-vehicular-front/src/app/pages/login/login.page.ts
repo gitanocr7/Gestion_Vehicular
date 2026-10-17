@@ -1,17 +1,14 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { 
-  IonHeader, 
-  IonToolbar, 
-  IonTitle, 
-  IonContent, 
-  IonItem, 
-  IonInput, 
-  IonButton, 
-  IonText, 
-  IonIcon 
+import {
+  IonContent,
+  IonItem,
+  IonInput,
+  IonButton,
+  IonText,
+  IonIcon
 } from '@ionic/angular';
 import { AuthService } from '../../services/auth.service';
 
@@ -21,17 +18,14 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./login.page.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
-    FormsModule, 
-    RouterModule, 
-    IonHeader, 
-    IonToolbar, 
-    IonTitle, 
-    IonContent, 
-    IonItem, 
-    IonInput, 
-    IonButton, 
-    IonText, 
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    IonContent,
+    IonItem,
+    IonInput,
+    IonButton,
+    IonText,
     IonIcon
   ]
 })
@@ -44,8 +38,9 @@ export class LoginPage {
   errorMessage = '';
 
   constructor(
-    private router: Router, 
-    private authService: AuthService
+    private router: Router,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   onLogin() {
@@ -71,6 +66,9 @@ export class LoginPage {
       error: (err: any) => {
         console.error('Error detallado del backend al iniciar sesión:', err);
         this.errorMessage = err.error?.mensaje || 'Credenciales inválidas. Verifique sus datos.';
+        // La app corre en modo "zoneless" (sin zone.js): hay que pedir explícitamente
+        // que se vuelva a renderizar la vista al recibir la respuesta de forma asíncrona.
+        this.cdr.markForCheck();
       }
     });
   }
