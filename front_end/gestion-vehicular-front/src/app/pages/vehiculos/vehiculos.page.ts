@@ -332,3 +332,4 @@ export class VehiculosPage implements OnInit {
     return 'medium';
   }
 }
+  

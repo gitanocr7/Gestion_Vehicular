@@ -1,7 +1,5 @@
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { VehiculosPage } from './vehiculos.page';
 import { VehiculosService } from '../../services/vehiculos.service';
 import { AuthService } from '../../services/auth.service';
@@ -14,10 +12,32 @@ describe('VehiculosPage', () => {
   const vehiculosServiceMock = {
     listar: jasmine.createSpy('listar').and.returnValue(of([])),
     listarTipos: jasmine.createSpy('listarTipos').and.returnValue(of([])),
-    crear: jasmine.createSpy('crear').and.returnValue(of({
-      id: 1,
-      patente: 'TEST01'
-    }))
+    obtener: jasmine.createSpy('obtener').and.returnValue(
+      of({
+        id: 1,
+        patente: 'TEST01',
+        marca: 'Toyota',
+        modelo: 'Yaris',
+        anio: 2024,
+        estado_operativo: 'Disponible',
+        kilometraje: 1000,
+        fecha_adquisicion: '2024-01-01',
+        tipo_vehiculo: 5
+      })
+    ),
+    crear: jasmine.createSpy('crear').and.returnValue(
+      of({
+        id: 1,
+        patente: 'TEST01',
+        marca: 'Toyota',
+        modelo: 'Yaris',
+        anio: 2024,
+        estado_operativo: 'Disponible',
+        kilometraje: 1000,
+        fecha_adquisicion: '2024-01-01',
+        tipo_vehiculo: 5
+      })
+    )
   };
 
   const authServiceMock = {
@@ -28,15 +48,24 @@ describe('VehiculosPage', () => {
       rol: 'admin',
       token: 'test-token'
     }),
-    getToken: jasmine.createSpy('getToken').and.returnValue('test-token')
+    getToken: jasmine.createSpy('getToken').and.returnValue('test-token'),
+    getUsuarioActual: jasmine.createSpy('getUsuarioActual').and.returnValue({
+      id: 1,
+      rol: 'admin',
+      token: 'test-token'
+    })
   };
 
   beforeEach(async () => {
+    // Reiniciar los mocks antes de cada prueba.
+    vehiculosServiceMock.listar.calls.reset();
+    vehiculosServiceMock.listarTipos.calls.reset();
+    vehiculosServiceMock.obtener.calls.reset();
+    vehiculosServiceMock.crear.calls.reset();
+
     await TestBed.configureTestingModule({
       imports: [VehiculosPage],
       providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
         {
           provide: VehiculosService,
           useValue: vehiculosServiceMock
@@ -53,11 +82,19 @@ describe('VehiculosPage', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('debería crear el componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load vehicle types', () => {
+  it('debería cargar los vehículos', () => {
+    expect(vehiculosServiceMock.listar).toHaveBeenCalled();
+  });
+
+  it('debería cargar los tipos de vehículos', () => {
     expect(vehiculosServiceMock.listarTipos).toHaveBeenCalled();
+  });
+
+  it('debería reconocer al usuario administrador', () => {
+    expect(component.esAdmin).toBeTrue();
   });
 });

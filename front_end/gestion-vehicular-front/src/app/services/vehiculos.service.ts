@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface TipoVehiculo {
@@ -40,8 +40,8 @@ export interface VehiculoCrear {
   providedIn: 'root'
 })
 export class VehiculosService {
-  private baseUrl = `${environment.apiUrl}vehiculos/`;
-  private tiposUrl = `${environment.apiUrl}tipos-vehiculo/`;
+  private readonly baseUrl = `${environment.apiUrl}vehiculos/`;
+  private readonly tiposUrl = `${environment.apiUrl}tipos-vehiculo/`;
 
   constructor(private http: HttpClient) {}
 
@@ -54,7 +54,7 @@ export class VehiculosService {
       params = params.set('search', filtros.search);
     }
 
-    if (filtros?.estado) {
+    if (filtros?.estado && filtros.estado !== 'todos') {
       params = params.set('estado', filtros.estado);
     }
 
@@ -66,7 +66,23 @@ export class VehiculosService {
   }
 
   listarTipos(): Observable<TipoVehiculo[]> {
-    return this.http.get<TipoVehiculo[]>(this.tiposUrl);
+    console.log('[VehiculosService] URL de tipos:', this.tiposUrl);
+
+    return this.http.get<TipoVehiculo[]>(this.tiposUrl).pipe(
+      tap({
+        next: (datos) => {
+          console.log('[VehiculosService] Tipos recibidos:', datos);
+        },
+        error: (error) => {
+          console.error(
+            '[VehiculosService] Error al obtener tipos:',
+            error.status,
+            error.message,
+            error
+          );
+        }
+      })
+    );
   }
 
   crear(datos: VehiculoCrear): Observable<Vehiculo> {
