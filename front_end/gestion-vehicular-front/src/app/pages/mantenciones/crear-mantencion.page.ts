@@ -26,7 +26,7 @@ import {
   IonTextarea,
   IonTitle,
   IonToolbar
-} from '@ionic/angular/standalone';
+} from '@ionic/angular';
 
 import { AuthService } from '../../services/auth.service';
 import { MantencionesService } from '../../services/mantenciones.service';
@@ -39,6 +39,8 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-crear-mantencion',
   standalone: true,
+  templateUrl: './crear-mantencion.page.html',
+  styleUrls: ['./crear-mantencion.page.scss'],
   imports: [
     CommonModule,
     FormsModule,
@@ -62,9 +64,7 @@ import { environment } from '../../../environments/environment';
     IonSelect,
     IonSelectOption,
     IonTextarea
-  ],
-  templateUrl: './crear-mantencion.page.html',
-  styleUrls: ['./crear-mantencion.page.scss']
+  ]
 })
 export class CrearMantencionPage implements OnInit {
   guardando = false;
@@ -152,7 +152,7 @@ export class CrearMantencionPage implements OnInit {
 
         this.mostrarAlerta(
           'Error',
-          'No se pudieron cargar los responsables. Verifica que la API permita consultar usuarios.'
+          'No se pudieron cargar los responsables. Verifica el endpoint de usuarios y sus permisos.'
         );
       }
     });
@@ -182,7 +182,9 @@ export class CrearMantencionPage implements OnInit {
 
     const datos = {
       vehiculo: Number(this.formulario.vehiculo),
-      usuario_responsable: Number(this.formulario.usuario_responsable),
+      usuario_responsable: Number(
+        this.formulario.usuario_responsable
+      ),
       tipo_mantencion: this.formulario.tipo_mantencion,
       fecha_programada: this.formulario.fecha_programada,
       fecha_realizada: this.formulario.fecha_realizada || null,
@@ -210,7 +212,7 @@ export class CrearMantencionPage implements OnInit {
         const mensaje =
           error?.error?.detail ||
           error?.error?.mensaje ||
-          this.obtenerErroresValidacion(error?.error) ||
+          this.formatearErrores(error?.error) ||
           'No se pudo registrar la mantención. Verifica los datos y tus permisos.';
 
         await this.mostrarAlerta('Error', mensaje);
@@ -222,7 +224,7 @@ export class CrearMantencionPage implements OnInit {
     this.router.navigate(['/mantenciones']);
   }
 
-  private obtenerErroresValidacion(error: any): string {
+  private formatearErrores(error: any): string {
     if (!error || typeof error !== 'object') {
       return '';
     }
@@ -244,7 +246,7 @@ export class CrearMantencionPage implements OnInit {
   ): Promise<void> {
     const alerta = await this.alertController.create({
       header: titulo,
-      message: mensaje.replace(/\n/g, '<br>'),
+      message: mensaje,
       buttons: ['Aceptar']
     });
 
