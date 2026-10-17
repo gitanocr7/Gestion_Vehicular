@@ -2,11 +2,31 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
+
 import {
   AlertController,
-  IonicModule
-} from '@ionic/angular';
+  IonButton,
+  IonButtons,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonCardTitle,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonSelect,
+  IonSelectOption,
+  IonTextarea,
+  IonTitle,
+  IonToolbar
+} from '@ionic/angular/standalone';
 
 import { AuthService } from '../../services/auth.service';
 import { MantencionesService } from '../../services/mantenciones.service';
@@ -16,8 +36,6 @@ import {
 } from '../../services/vehiculos.service';
 import { environment } from '../../../environments/environment';
 
-import { HttpClient } from '@angular/common/http';
-
 @Component({
   selector: 'app-crear-mantencion',
   standalone: true,
@@ -25,13 +43,30 @@ import { HttpClient } from '@angular/common/http';
     CommonModule,
     FormsModule,
     RouterModule,
-    IonicModule
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
+    IonCardContent,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonInput,
+    IonSelect,
+    IonSelectOption,
+    IonTextarea
   ],
   templateUrl: './crear-mantencion.page.html',
   styleUrls: ['./crear-mantencion.page.scss']
 })
 export class CrearMantencionPage implements OnInit {
-
   guardando = false;
   cargandoVehiculos = false;
   cargandoUsuarios = false;
@@ -69,7 +104,7 @@ export class CrearMantencionPage implements OnInit {
       return;
     }
 
-    const rol = this.authService.getRole();
+    const rol = this.authService.getRole().trim().toLowerCase();
 
     if (!['admin', 'administrador'].includes(rol)) {
       this.router.navigate(['/mantenciones']);
@@ -85,17 +120,16 @@ export class CrearMantencionPage implements OnInit {
 
     this.vehiculosService.listar().subscribe({
       next: (datos) => {
-        this.vehiculos = datos;
+        this.vehiculos = Array.isArray(datos) ? datos : [];
         this.cargandoVehiculos = false;
       },
-      error: async (error) => {
+      error: (error) => {
         this.cargandoVehiculos = false;
-
         console.error('Error al cargar vehículos:', error);
 
-        await this.mostrarAlerta(
+        this.mostrarAlerta(
           'Error',
-          'No se pudieron cargar los vehículos. Intenta nuevamente.'
+          'No se pudieron cargar los vehículos. Verifica la conexión con la API.'
         );
       }
     });
@@ -106,38 +140,40 @@ export class CrearMantencionPage implements OnInit {
 
     this.http.get<any>(this.usuariosUrl).subscribe({
       next: (respuesta) => {
-        // DRF normalmente devuelve una lista, aunque puede configurarse
-        // paginación y devolver un objeto con la propiedad results.
         this.usuarios = Array.isArray(respuesta)
           ? respuesta
-          : (respuesta?.results ?? []);
+          : respuesta?.results ?? [];
 
         this.cargandoUsuarios = false;
       },
-      error: async (error) => {
+      error: (error) => {
         this.cargandoUsuarios = false;
-
         console.error('Error al cargar usuarios:', error);
 
-        await this.mostrarAlerta(
+        this.mostrarAlerta(
           'Error',
-          'No se pudieron cargar los responsables. Verifica los permisos de la API.'
+          'No se pudieron cargar los responsables. Verifica que la API permita consultar usuarios.'
         );
       }
     });
   }
 
   async guardar(): Promise<void> {
+    const km = Number(this.formulario.km_actual);
+    const costo = Number(this.formulario.costo_total);
+
     if (
       !this.formulario.vehiculo ||
       !this.formulario.usuario_responsable ||
       !this.formulario.fecha_programada ||
-      Number(this.formulario.km_actual) < 0 ||
-      Number(this.formulario.costo_total) < 0
+      !Number.isFinite(km) ||
+      km < 0 ||
+      !Number.isFinite(costo) ||
+      costo < 0
     ) {
       await this.mostrarAlerta(
         'Datos incompletos',
-        'Completa el vehículo, responsable, fecha programada y valores válidos.'
+        'Completa el vehículo, responsable, fecha programada y valores numéricos válidos.'
       );
       return;
     }
@@ -145,12 +181,15 @@ export class CrearMantencionPage implements OnInit {
     this.guardando = true;
 
     const datos = {
-      ...this.formulario,
       vehiculo: Number(this.formulario.vehiculo),
       usuario_responsable: Number(this.formulario.usuario_responsable),
-      km_actual: Number(this.formulario.km_actual),
-      costo_total: Number(this.formulario.costo_total),
-      fecha_realizada: this.formulario.fecha_realizada || null
+      tipo_mantencion: this.formulario.tipo_mantencion,
+      fecha_programada: this.formulario.fecha_programada,
+      fecha_realizada: this.formulario.fecha_realizada || null,
+      estado: this.formulario.estado,
+      km_actual: km,
+      observaciones: this.formulario.observaciones,
+      costo_total: costo
     };
 
     this.mantencionesService.crear(datos).subscribe({
@@ -166,12 +205,12 @@ export class CrearMantencionPage implements OnInit {
       },
       error: async (error) => {
         this.guardando = false;
-
         console.error('Error al guardar mantención:', error);
 
         const mensaje =
           error?.error?.detail ||
           error?.error?.mensaje ||
+          this.obtenerErroresValidacion(error?.error) ||
           'No se pudo registrar la mantención. Verifica los datos y tus permisos.';
 
         await this.mostrarAlerta('Error', mensaje);
@@ -183,13 +222,29 @@ export class CrearMantencionPage implements OnInit {
     this.router.navigate(['/mantenciones']);
   }
 
+  private obtenerErroresValidacion(error: any): string {
+    if (!error || typeof error !== 'object') {
+      return '';
+    }
+
+    return Object.entries(error)
+      .map(([campo, mensajes]) => {
+        const detalle = Array.isArray(mensajes)
+          ? mensajes.join(', ')
+          : String(mensajes);
+
+        return `${campo}: ${detalle}`;
+      })
+      .join('\n');
+  }
+
   private async mostrarAlerta(
     titulo: string,
     mensaje: string
   ): Promise<void> {
     const alerta = await this.alertController.create({
       header: titulo,
-      message: mensaje,
+      message: mensaje.replace(/\n/g, '<br>'),
       buttons: ['Aceptar']
     });
 
