@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
@@ -7,7 +8,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  // Se agrega la / entre apiUrl y el endpoint
+
   private loginUrl = `${environment.apiUrl}/login/`;
   private registerUrl = `${environment.apiUrl}/registro/`;
 
@@ -27,13 +28,17 @@ export class AuthService {
     return this.http.post<any>(this.registerUrl, userData);
   }
 
-  logout() {
+  logout(): void {
     localStorage.removeItem('user');
   }
 
-  getUser() {
+  getUser(): any {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
+  }
+
+  getUsuarioActual(): any {
+    return this.getUser();
   }
 
   isLoggedIn(): boolean {

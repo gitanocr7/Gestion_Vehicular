@@ -1,77 +1,235 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ToastController, AlertController } from '@ionic/angular';
+
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonButton,
+  IonIcon,
+  IonBadge,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonText,
+  AlertController,
+  IonNote,
+  IonSpinner
+} from '@ionic/angular';
+
+import { AuthService } from '../../services/auth.service';
+import { MantencionesService } from '../../services/mantenciones.service';
 
 @Component({
   selector: 'app-mantenciones',
   templateUrl: './mantenciones.page.html',
   styleUrls: ['./mantenciones.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonList,
+    IonItem,
+    IonLabel,
+    IonButton,
+    IonIcon,
+    IonBadge,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
+    IonCardContent,
+    IonText,
+    IonNote,
+    IonSpinner
+  ]
 })
 export class MantencionesPage implements OnInit {
+
   mantenciones: any[] = [];
-  isAdmin: boolean = false; // Bandera para controlar la interfaz
-  private apiUrl = 'http://localhost:8000/api/mantenciones/'; // Ajusta tu URL API
+  isAdmin = false;
+  cargando = false;
 
   constructor(
-    private http: HttpClient,
-    private toastCtrl: ToastController,
-    private alertCtrl: AlertController
+    private router: Router,
+    private authService: AuthService,
+    private mantencionService: MantencionesService,
+    private alertController: AlertController,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ionViewWillEnter() {
-    this.verificarRol();
+  ngOnInit(): void {
+    this.verificarRolUsuario();
+  }
+
+  ionViewWillEnter(): void {
+    this.verificarRolUsuario();
     this.cargarMantenciones();
   }
 
-  verificarRol() {
-    // Lee el rol guardado durante el Login en localStorage/SessionStorage
-    const nombreRol = localStorage.getItem('nombre_rol');
-    this.isAdmin = nombreRol === 'Administrador';
+  /**
+   * Comprueba el rol devuelto por el login.
+   * Solo admin y administrador pueden modificar mantenciones.
+   */
+  verificarRolUsuario(): void {
+    const rol = this.authService.getRole()
+      .trim()
+      .toLowerCase();
+
+    this.isAdmin = rol === 'admin' || rol === 'administrador';
+
+    this.cdr.markForCheck();
   }
 
-  cargarMantenciones() {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders().set('Authorization', `Token ${token}`);
+  /**
+   * Carga las mantenciones desde Django.
+   */
+  cargarMantenciones(): void {
+    if (!this.authService.isLoggedIn()) {
+      this.mantenciones = [];
+      this.router.navigate(['/login']);
+      return;
+    }
 
-    this.http.get<any[]>(this.apiUrl, { headers }).subscribe({
-      next: (data) => (this.mantenciones = data),
-      error: (err) => console.error('Error cargando mantenciones:', err),
+    this.cargando = true;
+    this.cdr.markForCheck();
+
+    this.mantencionService.getMantenciones().subscribe({
+      next: (data: any[]) => {
+        this.mantenciones = Array.isArray(data) ? data : [];
+        this.cargando = false;
+        this.cdr.markForCheck();
+      },
+      error: (err: any) => {
+        console.error('Error al cargar mantenciones:', err);
+        this.cargando = false;
+
+        this.mostrarAlerta(
+          'Error',
+          err.status === 401 || err.status === 403
+            ? 'No tienes autorización para consultar las mantenciones. Inicia sesión nuevamente si es necesario.'
+            : 'No se pudieron cargar las mantenciones.'
+        );
+
+        this.cdr.markForCheck();
+      }
     });
   }
 
-  // Método de eliminación exclusivo para Admin
-  async eliminarMantencion(id: number) {
-    if (!this.isAdmin) return;
-
-    const alert = await this.alertCtrl.create({
-      header: 'Confirmar eliminación',
-      message: '¿Estás seguro de eliminar este registro de mantención?',
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Eliminar',
-          role: 'destructive',
-          handler: () => {
-            const token = localStorage.getItem('token');
-            const headers = new HttpHeaders().set('Authorization', `Token ${token}`);
-
-            this.http.delete(`${this.apiUrl}${id}/`, { headers }).subscribe({
-              next: () => {
-                this.mostrarToast('Mantención eliminada correctamente');
-                this.cargarMantenciones();
-              },
-              error: () => this.mostrarToast('Error al intentar eliminar'),
-            });
-          },
-        },
-      ],
+  /**
+   * Muestra mensajes al usuario.
+   */
+  async mostrarAlerta(
+    titulo: string,
+    mensaje: string
+  ): Promise<void> {
+    const alert = await this.alertController.create({
+      header: titulo,
+      message: mensaje,
+      buttons: ['OK']
     });
 
     await alert.present();
   }
 
-  async mostrarToast(msj: string) {
-    const toast = await this.toastCtrl.create({ message: msj, duration: 2000 });
-    toast.present();
+  /**
+   * Confirma la eliminación de una mantención.
+   */
+  async confirmarEliminacion(id: number): Promise<void> {
+    if (!this.isAdmin) {
+      await this.mostrarAlerta(
+        'Acceso denegado',
+        'Solo el administrador puede eliminar mantenciones.'
+      );
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Confirmar eliminación',
+      message: '¿Estás seguro de que deseas eliminar esta mantención?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.eliminarMantencion(id);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  /**
+   * Elimina una mantención mediante el servicio.
+   */
+  eliminarMantencion(id: number): void {
+    if (!this.isAdmin) {
+      return;
+    }
+
+    this.mantencionService.deleteMantencion(id).subscribe({
+      next: () => {
+        this.mostrarAlerta(
+          'Éxito',
+          'Mantención eliminada correctamente.'
+        );
+
+        this.cargarMantenciones();
+      },
+      error: (err: any) => {
+        console.error('Error al eliminar mantención:', err);
+
+        this.mostrarAlerta(
+          'Error',
+          err.status === 401 || err.status === 403
+            ? 'No tienes permisos para eliminar esta mantención.'
+            : 'No fue posible eliminar la mantención.'
+        );
+
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  /**
+   * Abre el formulario de creación.
+   */
+  irACrear(): void {
+    if (!this.isAdmin) {
+      return;
+    }
+
+    this.router.navigate(['/mantenciones/crear']);
+  }
+
+  /**
+   * Abre el formulario de edición.
+   */
+  irAEditar(id: number): void {
+    if (!this.isAdmin) {
+      return;
+    }
+
+    this.router.navigate(['/mantenciones/editar', id]);
   }
 }
