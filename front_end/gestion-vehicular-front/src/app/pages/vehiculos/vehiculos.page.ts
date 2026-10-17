@@ -101,11 +101,15 @@ export class VehiculosPage implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('Página de vehículos iniciada.');
+    console.log('Usuario autenticado:', this.authService.isLoggedIn());
+    console.log('Rol detectado:', this.authService.getRole());
+    console.log('¿Es administrador?:', this.esAdmin);
+
     this.cargarVehiculos();
 
-    if (this.esAdmin) {
-      this.cargarTiposVehiculo();
-    }
+    // Cargamos los tipos al iniciar la página.
+    this.cargarTiposVehiculo();
   }
 
   private formularioVacio(): VehiculoCrear {
@@ -138,35 +142,55 @@ export class VehiculosPage implements OnInit {
 
     this.vehiculosService.listar(filtros).subscribe({
       next: (data) => {
+        console.log('Vehículos recibidos:', data);
+
         this.vehiculos = data;
         this.cargando = false;
-        this.cdr.markForCheck();
+
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar vehículos:', err);
 
         this.errorMessage =
-          'No se pudo cargar la flota. Comprueba que Django esté funcionando.';
+          'No se pudo cargar la flota. Comprueba la conexión con Django.';
 
         this.cargando = false;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       }
     });
   }
 
   cargarTiposVehiculo(): void {
+    console.log(
+      'Consultando tipos de vehículos en:',
+      'https://gestion-vehicular-back.onrender.com/api/tipos-vehiculo/'
+    );
+
     this.vehiculosService.listarTipos().subscribe({
       next: (data) => {
+        console.log('Tipos recibidos desde Django:', data);
+
         this.tiposVehiculo = data;
-        this.cdr.markForCheck();
+
+        if (!data || data.length === 0) {
+          this.errorFormulario =
+            'La API respondió, pero no hay tipos de vehículos registrados.';
+        } else {
+          this.errorFormulario = '';
+        }
+
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar tipos de vehículos:', err);
 
         this.errorFormulario =
-          'No se pudieron cargar los tipos de vehículos.';
+          `No se pudieron cargar los tipos de vehículos. HTTP: ${
+            err.status || 'sin conexión'
+          }`;
 
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       }
     });
   }
@@ -189,6 +213,8 @@ export class VehiculosPage implements OnInit {
 
   abrirFormulario(): void {
     if (!this.esAdmin) {
+      this.errorFormulario =
+        'Solo un administrador puede registrar vehículos.';
       return;
     }
 
@@ -196,6 +222,7 @@ export class VehiculosPage implements OnInit {
     this.mensajeExito = '';
     this.mostrarFormulario = true;
 
+    // Reintenta cargar los tipos si aún no han llegado.
     if (this.tiposVehiculo.length === 0) {
       this.cargarTiposVehiculo();
     }
@@ -267,7 +294,7 @@ export class VehiculosPage implements OnInit {
         this.filtroEstado = 'todos';
 
         this.cargarVehiculos();
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al registrar vehículo:', err);
@@ -290,7 +317,7 @@ export class VehiculosPage implements OnInit {
             'No se pudo registrar el vehículo. Verifica la conexión con Django.';
         }
 
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       }
     });
   }
