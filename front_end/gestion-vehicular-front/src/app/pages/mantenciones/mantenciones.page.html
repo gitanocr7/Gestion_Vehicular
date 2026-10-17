@@ -1,3 +1,4 @@
+<app-site-nav></app-site-nav>
 
 <ion-header>
   <ion-toolbar color="primary">
@@ -57,7 +58,6 @@
               m.estado === 'Cancelada' ? 'danger' :
               'warning'
             ">
-
             {{ m.estado }}
           </ion-badge>
         </ion-card-subtitle>
@@ -118,7 +118,6 @@
             size="small"
             color="tertiary"
             (click)="irAEditar(m.id)">
-
             <ion-icon
               name="create-outline"
               slot="icon-only">
@@ -129,7 +128,6 @@
             size="small"
             color="danger"
             (click)="confirmarEliminacion(m.id)">
-
             <ion-icon
               name="trash-outline"
               slot="icon-only">

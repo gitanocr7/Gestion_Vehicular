@@ -1,4 +1,3 @@
-
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -28,6 +27,7 @@ import {
   IonToolbar
 } from '@ionic/angular';
 
+import { SiteNavComponent } from '../../shared/site-nav/site-nav.component';
 import { AuthService } from '../../services/auth.service';
 import { MantencionesService } from '../../services/mantenciones.service';
 import {
@@ -45,6 +45,7 @@ import { environment } from '../../../environments/environment';
     CommonModule,
     FormsModule,
     RouterModule,
+    SiteNavComponent,
     IonHeader,
     IonToolbar,
     IonTitle,

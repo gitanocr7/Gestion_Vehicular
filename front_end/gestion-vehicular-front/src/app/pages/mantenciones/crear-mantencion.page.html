@@ -1,3 +1,4 @@
+<app-site-nav></app-site-nav>
 
 <ion-header>
   <ion-toolbar color="primary">
@@ -23,10 +24,7 @@
       </ion-card-header>
 
       <ion-card-content>
-        <form
-          (ngSubmit)="guardar()"
-          #formMantencion="ngForm"
-        >
+        <form (ngSubmit)="guardar()" #formMantencion="ngForm">
           <ion-list lines="full">
 
             <ion-item>
@@ -37,12 +35,10 @@
                 [(ngModel)]="formulario.vehiculo"
                 placeholder="Selecciona un vehículo"
                 interface="popover"
-                required
-              >
+                required>
                 <ion-select-option
                   *ngFor="let vehiculo of vehiculos"
-                  [value]="vehiculo.id"
-                >
+                  [value]="vehiculo.id">
                   {{ vehiculo.patente }} -
                   {{ vehiculo.marca }} {{ vehiculo.modelo }}
                 </ion-select-option>
@@ -57,12 +53,10 @@
                 [(ngModel)]="formulario.usuario_responsable"
                 placeholder="Selecciona un responsable"
                 interface="popover"
-                required
-              >
+                required>
                 <ion-select-option
                   *ngFor="let usuario of usuarios"
-                  [value]="usuario.id"
-                >
+                  [value]="usuario.id">
                   {{ usuario.nombre }}
                 </ion-select-option>
               </ion-select>
@@ -74,8 +68,7 @@
                 labelPlacement="stacked"
                 name="tipo_mantencion"
                 [(ngModel)]="formulario.tipo_mantencion"
-                required
-              >
+                required>
                 <ion-select-option value="Preventiva">
                   Preventiva
                 </ion-select-option>
@@ -92,8 +85,8 @@
                 type="date"
                 name="fecha_programada"
                 [(ngModel)]="formulario.fecha_programada"
-                required
-              ></ion-input>
+                required>
+              </ion-input>
             </ion-item>
 
             <ion-item>
@@ -102,8 +95,8 @@
                 labelPlacement="stacked"
                 type="date"
                 name="fecha_realizada"
-                [(ngModel)]="formulario.fecha_realizada"
-              ></ion-input>
+                [(ngModel)]="formulario.fecha_realizada">
+              </ion-input>
             </ion-item>
 
             <ion-item>
@@ -112,8 +105,7 @@
                 labelPlacement="stacked"
                 name="estado"
                 [(ngModel)]="formulario.estado"
-                required
-              >
+                required>
                 <ion-select-option value="Pendiente">
                   Pendiente
                 </ion-select-option>
@@ -137,8 +129,8 @@
                 name="km_actual"
                 min="0"
                 [(ngModel)]="formulario.km_actual"
-                required
-              ></ion-input>
+                required>
+              </ion-input>
             </ion-item>
 
             <ion-item>
@@ -149,8 +141,8 @@
                 [(ngModel)]="formulario.observaciones"
                 placeholder="Describe los trabajos o problemas detectados"
                 rows="4"
-                autoGrow="true"
-              ></ion-textarea>
+                autoGrow="true">
+              </ion-textarea>
             </ion-item>
 
             <ion-item>
@@ -161,8 +153,8 @@
                 name="costo_total"
                 min="0"
                 [(ngModel)]="formulario.costo_total"
-                required
-              ></ion-input>
+                required>
+              </ion-input>
             </ion-item>
 
           </ion-list>
@@ -171,13 +163,8 @@
             <ion-button
               type="submit"
               expand="block"
-              [disabled]="guardando || formMantencion.invalid"
-            >
-              <ion-icon
-                name="save-outline"
-                slot="start"
-              ></ion-icon>
-
+              [disabled]="guardando || formMantencion.invalid">
+              <ion-icon name="save-outline" slot="start"></ion-icon>
               {{ guardando ? 'Guardando...' : 'Guardar mantención' }}
             </ion-button>
 
@@ -186,8 +173,7 @@
               expand="block"
               fill="outline"
               color="medium"
-              (click)="cancelar()"
-            >
+              (click)="cancelar()">
               Cancelar
             </ion-button>
           </div>

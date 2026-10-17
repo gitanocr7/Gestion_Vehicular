@@ -1,4 +1,3 @@
-
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -26,6 +25,7 @@ import {
   IonSpinner
 } from '@ionic/angular';
 
+import { SiteNavComponent } from '../../shared/site-nav/site-nav.component';
 import { AuthService } from '../../services/auth.service';
 import { MantencionesService } from '../../services/mantenciones.service';
 
@@ -38,6 +38,7 @@ import { MantencionesService } from '../../services/mantenciones.service';
     CommonModule,
     FormsModule,
     RouterModule,
+    SiteNavComponent,
     IonHeader,
     IonToolbar,
     IonTitle,

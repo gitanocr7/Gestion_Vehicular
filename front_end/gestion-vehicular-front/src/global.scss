@@ -1,107 +1,94 @@
-/* 
+/*
  * App Global CSS
- * Sistema de Gestión Vehicular
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
-/* Core CSS de Ionic */
+/* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Utilidades de Ionic */
+/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/* Modo oscuro del sistema: desactivado para mantener el diseño claro */
-/* @import "@ionic/angular/css/palettes/dark.system.css"; */
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
 
-/* =========================================
-   PALETA GLOBAL
-   ========================================= */
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+@import '@ionic/angular/css/palettes/dark.system.css';
 
+/*
+ * --------------------------------------------------------------------------
+ * Sistema de diseño compartido del proyecto (Sistema de Gestión Vehicular)
+ * --------------------------------------------------------------------------
+ * Estos valores viven una sola vez acá para que todas las páginas (Inicio,
+ * Login, Registro, Vehículos, Mantenciones, Mapa y Grifos, Personal...) se
+ * vean consistentes. Antes cada página repetía sus propios colores/tamaños;
+ * de ahora en adelante, cualquier ajuste de marca se hace en un solo lugar.
+ */
 :root {
-  --primary: #123b66;
-  --primary-dark: #0b2948;
-  --secondary: #0f172a;
-  --accent: #3b82f6;
-  --success: #16a34a;
-  --bg-light: #f1f5f9;
-  --text-dark: #1e293b;
+  --primary: #c9302c;
+  --primary-dark: #961c19;
+  --secondary: #1a252f;
+  --accent: #f39c12;
+  --success: #27ae60;
+  --bg-light: #f8f9fa;
+  --text-dark: #2c3e50;
   --text-light: #ffffff;
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.14);
 
-  --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 6px 18px rgba(15, 23, 42, 0.12);
-
-  --font-base: "Segoe UI", system-ui, -apple-system, sans-serif;
-
-  /* Colores nativos de Ionic */
-  --ion-color-primary: #123b66;
-  --ion-color-primary-rgb: 18, 59, 102;
-  --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #10345a;
-  --ion-color-primary-tint: #2a4f75;
-
-  --ion-color-secondary: #334155;
-  --ion-color-secondary-rgb: 51, 65, 85;
-  --ion-color-secondary-contrast: #ffffff;
-  --ion-color-secondary-contrast-rgb: 255, 255, 255;
-  --ion-color-secondary-shade: #2d394b;
-  --ion-color-secondary-tint: #475569;
-
-  --ion-color-success: #16a34a;
-  --ion-color-success-rgb: 22, 163, 74;
-  --ion-color-success-contrast: #ffffff;
-  --ion-color-success-contrast-rgb: 255, 255, 255;
-  --ion-color-success-shade: #138f40;
-  --ion-color-success-tint: #2eae5d;
-
-  --ion-background-color: #f1f5f9;
-  --ion-text-color: #1e293b;
+  --font-base: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 body {
   font-family: var(--font-base);
-  color: var(--text-dark);
-  background: var(--bg-light);
 }
 
-/* =========================================
-   BARRAS DE TÍTULO
-   ========================================= */
-
+/* Barra de título usada por todas las páginas públicas internas
+   (Vehículos, Mantenciones, Mapa y Grifos, Personal, Talleres, Avisos...) */
 .page-title-bar {
-  background: var(--primary);
+  background-color: var(--secondary);
   color: var(--text-light);
   padding: 22px 5%;
 
   h1 {
     margin: 0;
     font-size: 1.5rem;
-    font-weight: 700;
     display: flex;
     align-items: center;
     gap: 10px;
 
     i {
-      color: #93c5fd;
+      color: var(--primary);
     }
   }
 }
 
-/* =========================================
-   BOTONES REUTILIZABLES
-   ========================================= */
-
+/* Botones de estilo "link" (para <a>, fuera de ion-button) reutilizables en
+   toda la app: hero de Inicio, tarjetas de módulos, CTAs, etc. */
 .btn-main {
   padding: 12px 26px;
   border-radius: var(--radius-sm);
@@ -109,55 +96,52 @@ body {
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 8px;
   font-size: 0.95rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease,
-    background-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   cursor: pointer;
   border: none;
-}
 
-.btn-main:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
 }
 
 .btn-primary {
-  background: var(--primary);
-  color: #ffffff;
-}
+  background-color: var(--primary);
+  color: #fff;
 
-.btn-primary:hover {
-  background: var(--primary-dark);
+  &:hover {
+    background-color: var(--primary-dark);
+  }
 }
 
 .btn-secondary {
-  background: transparent;
+  background-color: transparent;
   color: var(--text-light);
   border: 2px solid var(--text-light);
-}
 
-.btn-secondary:hover {
-  background: var(--text-light);
-  color: var(--secondary);
+  &:hover {
+    background-color: var(--text-light);
+    color: var(--secondary);
+  }
 }
 
 .btn-outline {
-  background: transparent;
+  background-color: transparent;
   color: var(--primary);
   border: 2px solid var(--primary);
+
+  &:hover {
+    background-color: var(--primary);
+    color: #fff;
+  }
 }
 
-.btn-outline:hover {
-  background: var(--primary);
-  color: #ffffff;
-}
-
-/* =========================================
-   BOTONES NATIVOS DE IONIC
-   ========================================= */
-
+/* Unifica el tamaño y la forma de TODOS los ion-button del proyecto
+   (Login, Registro, Vehículos, Mantenciones, etc.) para que no varíen de
+   una pantalla a otra. */
 ion-button {
   --border-radius: var(--radius-sm);
   font-weight: 600;
@@ -165,12 +149,11 @@ ion-button {
   letter-spacing: 0;
 }
 
-/* =========================================
-   PANTALLAS DE LOGIN Y REGISTRO
-   ========================================= */
-
+/* Pantallas de acceso (Login y Registro): fondo oscuro institucional, igual
+   al navbar y footer del resto del sitio, con una tarjeta blanca centrada.
+   Se define acá una sola vez porque ambas pantallas usan el mismo diseño. */
 .auth-content {
-  --background: var(--bg-light);
+  --background: var(--secondary);
 }
 
 .auth-page {
@@ -187,34 +170,32 @@ ion-button {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--primary);
-  opacity: 0.85;
+  color: var(--text-light);
+  opacity: 0.8;
   text-decoration: none;
   font-size: 0.9rem;
   margin-bottom: 16px;
-}
 
-.auth-back:hover {
-  opacity: 1;
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .auth-card {
   width: 100%;
-  max-width: 440px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: var(--radius-lg);
+  max-width: 400px;
+  background: #fff;
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   padding: 32px 28px;
 
   h2 {
-    margin: 12px 0 4px;
-    color: var(--primary);
-    font-weight: 700;
+    margin: 12px 0 4px 0;
+    color: var(--text-dark);
   }
 
   p {
-    color: #64748b;
+    color: var(--ion-color-medium);
     margin: 0;
   }
 }
@@ -223,75 +204,4 @@ ion-button {
   font-size: 56px;
   color: var(--primary);
 }
-
-/* =========================================
-   CONTENEDORES Y TARJETAS COMPARTIDAS
-   ========================================= */
-
-.page-content {
-  --background: var(--bg-light);
-}
-
-.card-modern {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-ion-card {
-  --background: #ffffff;
-  --color: var(--text-dark);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-}
-
-ion-card-title {
-  color: var(--primary);
-}
-
-ion-card-subtitle {
-  color: #64748b;
-}
-
-/* =========================================
-   CAMPOS DE FORMULARIO
-   ========================================= */
-
-ion-item {
-  --color: var(--text-dark);
-  --border-color: #e2e8f0;
-}
-
-ion-input,
-ion-textarea,
-ion-select {
-  --color: var(--text-dark);
-  --placeholder-color: #94a3b8;
-}
-
-/* =========================================
-   TABLAS Y LISTAS
-   ========================================= */
-
-.table-container {
-  width: 100%;
-  overflow-x: auto;
-  border-radius: var(--radius-md);
-  background: #ffffff;
-  box-shadow: var(--shadow-sm);
-}
-
-@media (max-width: 576px) {
-  .page-title-bar {
-    padding: 18px 16px;
-  }
-
-  .page-title-bar h1 {
-    font-size: 1.25rem;
-  }
-
-  .auth-card {
-    padding: 24px 20px;
-  }
-}
+  
