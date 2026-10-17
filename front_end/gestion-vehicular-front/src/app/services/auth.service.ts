@@ -9,15 +9,15 @@ import { environment } from '../../environments/environment';
 })
 export class AuthService {
 
-  private loginUrl = `${environment.apiUrl}/login/`;
-  private registerUrl = `${environment.apiUrl}/registro/`;
+  private loginUrl = `${environment.apiUrl.replace(/\/+$/, '')}/login/`;
+  private registerUrl = `${environment.apiUrl.replace(/\/+$/, '')}/registro/`;
 
   constructor(private http: HttpClient) {}
 
   login(credentials: any): Observable<any> {
     return this.http.post<any>(this.loginUrl, credentials).pipe(
       tap(response => {
-        if (response.success) {
+        if (response?.success) {
           localStorage.setItem('user', JSON.stringify(response));
         }
       })
@@ -34,7 +34,17 @@ export class AuthService {
 
   getUser(): any {
     const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+
+    if (!user) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(user);
+    } catch {
+      localStorage.removeItem('user');
+      return null;
+    }
   }
 
   getUsuarioActual(): any {
@@ -42,11 +52,17 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.getUser();
+    const user = this.getUser();
+    return !!user?.id && !!user?.token;
   }
 
   getRole(): string {
     const user = this.getUser();
-    return user ? user.rol : '';
+    return user?.rol?.toString().trim().toLowerCase() ?? '';
+  }
+
+  getToken(): string | null {
+    const usuario = this.getUser();
+    return usuario?.token ?? null;
   }
 }

@@ -1,23 +1,27 @@
 
 from rest_framework import permissions
 
+from .models import Usuario
+
 
 class EsAdminOReadonly(permissions.BasePermission):
     """
-    Solo usuarios autenticados pueden consultar.
-    Solo administradores pueden modificar.
+    Permite consultar mantenciones a usuarios autenticados.
+    Solo los administradores pueden crear, editar o eliminar.
     """
 
     def has_permission(self, request, view):
-        # Confirma que DRF autenticó la petición.
-        if request.successful_authenticator is None:
-            return False
-
         usuario = request.user
 
+        # Solo acepta usuarios autenticados mediante el modelo propio.
+        if not isinstance(usuario, Usuario):
+            return False
+
+        # GET, HEAD y OPTIONS son operaciones de solo lectura.
         if request.method in permissions.SAFE_METHODS:
             return True
 
+        # Las modificaciones quedan reservadas al administrador.
         try:
             rol = usuario.rol.nombre_rol.strip().lower()
             return rol in ('admin', 'administrador')
