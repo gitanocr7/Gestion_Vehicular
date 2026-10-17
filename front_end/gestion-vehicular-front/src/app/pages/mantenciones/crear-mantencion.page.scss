@@ -1,333 +1,77 @@
-:host {
-  display: block;
-  height: 100vh;
-  overflow-y: auto;
-  background-color: var(--bg-light);
-  color: var(--text-dark);
-  font-family: var(--font-base);
-}
-
-/* --- HERO PORTADA CON CARRUSEL DE TODAS LAS IMÁGENES --- */
-.hero {
-  position: relative;
-  min-height: 520px;
-  overflow: hidden;
+.info-banner {
+  background: #e4e4e4;
+  border-left: 4px solid var(--ion-color-danger, #eb445a); 
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+
+  .info-banner-icon {
+    font-size: 24px;
+    color: var(--ion-color-danger, #eb445a);
+    flex-shrink: 0;
+  }
+
+  .page-subtitle {
+    color: var(--ion-color-dark-tint, #444);
+    margin: 0; 
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
 }
 
-.hero-carousel {
-  position: absolute;
-  top: 0;
-  left: 0;
+.iframe-container {
   width: 100%;
-  height: 100%;
-  z-index: 1;
+  height: 620px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  margin-bottom: 20px;
+  background: #f4f4f4;
 
-  .slide {
-    position: absolute;
-    top: 0;
-    left: 0;
+  iframe {
     width: 100%;
     height: 100%;
-    background-size: cover;
-    background-position: center;
-    opacity: 0;
-    animation: crossfade 35s infinite ease-in-out;
-
-    /* Hero Principal */
-    &.slide-1 {
-      background-image: url('https://decimosexta.cl/wp-content/uploads/2026/05/Diseno-sin-titulo-1-scaled.jpg');
-      animation-delay: 0s;
-    }
-
-    /* Carro Bomba */
-    &.slide-2 {
-      background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRASFOQXfAshey6GRT3bzMEeY4HNlyEfpgeGAK7PzuJFalfnxLuDwvIxbx6&s=10');
-      animation-delay: 5s;
-    }
-
-    /* Mecánica / Mantenciones */
-    &.slide-3 {
-      background-image: url('https://img.magnific.com/foto-gratis/dos-mecanicos-automoviles-cooperan-mientras-reparan-neumatico-automovil-cliente-taller-reparacion-automoviles_637285-4255.jpg?semt=ais_hybrid&w=740&q=80');
-      animation-delay: 10s;
-    }
-
-    /* Mapa / Georreferencia */
-    &.slide-4 {
-      background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1600&q=80');
-      animation-delay: 15s;
-    }
-
-    /* Taller Mecánico */
-    &.slide-5 {
-      background-image: url('https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=80');
-      animation-delay: 20s;
-    }
-
-    /* Comunicados */
-    &.slide-6 {
-      background-image: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1600&q=80');
-      animation-delay: 25s;
-    }
-
-    /* Login / Portal */
-    &.slide-7 {
-      background-image: url('https://www.funfte.cl/sitio/wp-content/uploads/2013/04/IMG_5183.jpg');
-      animation-delay: 30s;
-    }
+    border: none;
   }
 }
 
-/* Transición para 7 imágenes (100% / 7 ≈ 14.28% por imagen) */
-@keyframes crossfade {
-  0% { opacity: 0; }
-  3% { opacity: 1; }
-  14% { opacity: 1; }
-  17% { opacity: 0; }
-  100% { opacity: 0; }
-}
-
-.hero-overlay {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  min-height: 520px;
-  background: linear-gradient(rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.82));
+.puntos-list {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  color: var(--text-light);
-  padding: 40px 20px;
+  gap: 12px;
 
-  .hero-tag {
-    background-color: rgba(201, 48, 44, 0.2);
-    border: 1px solid var(--primary);
-    color: #ff7675;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 0.85rem;
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
     font-weight: 600;
-    margin-bottom: 20px;
-    text-transform: uppercase;
   }
+}
 
-  h2 {
-    font-size: 2.8rem;
-    max-width: 900px;
-    margin-bottom: 15px;
+.punto-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--ion-color-light, #f8f9fa);
+  border-radius: 10px;
+  padding: 12px 16px;
+
+  h4 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
     font-weight: 700;
   }
 
   p {
-    font-size: 1.15rem;
-    max-width: 700px;
-    margin-bottom: 35px;
-    color: #cbd5e1;
-    line-height: 1.6;
-  }
-
-  .hero-buttons {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .btn-main {
-    padding: 14px 28px;
-    font-size: 1rem;
-  }
-}
-
-/* --- RESUMEN DE ESTADO DE FLOTA --- */
-.status-bar {
-  max-width: 1100px;
-  margin: -40px auto 40px auto;
-  background: white;
-  border-radius: 8px;
-  padding: 25px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 10;
-}
-
-.status-card {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 10px;
-  border-right: 1px solid #e2e8f0;
-
-  &:last-child {
-    border-right: none;
-  }
-}
-
-.status-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-}
-
-.icon-green { background-color: #e8f8f0; color: var(--success); }
-.icon-yellow { background-color: #fef9e7; color: var(--accent); }
-.icon-red { background-color: #fde8e8; color: var(--primary); }
-
-.status-info {
-  h3 { font-size: 1.5rem; font-weight: 700; margin: 0; }
-  p { font-size: 0.85rem; color: #64748b; margin: 0; }
-}
-
-/* --- SECCIÓN DE MÓDULOS DE SISTEMA --- */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
-}
-
-.section-title {
-  text-align: center;
-  margin-bottom: 40px;
-
-  h3 {
-    font-size: 2rem;
-    color: var(--secondary);
-    margin-bottom: 10px;
-  }
-
-  p {
-    color: #64748b;
-  }
-}
-
-.modules-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 25px;
-}
-
-.card {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  display: flex;
-  flex-direction: column;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
-  }
-}
-
-.card-img {
-  height: 180px;
-  width: 100%;
-  object-fit: cover;
-}
-
-.card-body {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-
-  h4 {
-    font-size: 1.25rem;
-    margin-bottom: 10px;
-    color: var(--secondary);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    i {
-      color: var(--primary);
-    }
-  }
-
-  p {
-    color: #64748b;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    margin-bottom: 20px;
-    flex-grow: 1;
-  }
-}
-
-.card-btn {
-  background-color: var(--secondary);
-  color: white;
-  text-decoration: none;
-  padding: 10px 16px;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: background 0.3s;
-
-  &:hover {
-    background-color: var(--primary);
-  }
-}
-
-/* --- FOOTER --- */
-footer {
-  background-color: var(--secondary);
-  color: #94a3b8;
-  padding: 40px 5% 20px 5%;
-  margin-top: 60px;
-}
-
-.footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
-  margin-bottom: 30px;
-}
-
-.footer-col {
-  h4 {
-    color: white;
-    margin-bottom: 15px;
-    font-size: 1.1rem;
-  }
-
-  p, ul {
-    font-size: 0.9rem;
-    line-height: 1.6;
-    list-style: none;
     margin: 0;
-    padding: 0;
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
   }
 
-  a {
-    color: #94a3b8;
-    text-decoration: none;
-
-    &:hover {
-      color: white;
-    }
+  .descripcion {
+    font-style: italic;
   }
-}
-
-.copyright {
-  text-align: center;
-  padding-top: 20px;
-  border-top: 1px solid #334155;
-  font-size: 0.85rem;
 }
