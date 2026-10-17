@@ -43,8 +43,7 @@ class Vehiculo(models.Model):
     estado_operativo = models.CharField(max_length=20, default='Disponible')
     kilometraje = models.IntegerField()
     fecha_adquisicion = models.DateField()
-    imagen = models.TextField(blank=True, null=True) # Para la foto física o referencia visual
-
+    imagen = models.TextField(blank=True, null=True) 
     def __str__(self):
         return f"{self.patente} - {self.marca} {self.modelo}"
 
@@ -92,7 +91,6 @@ class Mantencion(models.Model):
     km_actual = models.IntegerField()
     observaciones = models.TextField(blank=True, null=True)
     costo_total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-
     def __str__(self):
         return f"Mantención #{self.id} - Vehículo: {self.vehiculo.patente}"
 

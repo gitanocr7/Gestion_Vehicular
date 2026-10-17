@@ -11,6 +11,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from .serializers import UsuarioSerializer 
 from django.db.models import Q
+from .permissions import EsAdminOReadonly
 
 class RolViewSet(viewsets.ModelViewSet):
     queryset = Rol.objects.all()
@@ -56,6 +57,10 @@ class MantencionPersonalViewSet(viewsets.ModelViewSet):
     queryset = MantencionPersonal.objects.all()
     serializer_class = MantencionPersonalSerializer
 
+class MantencionViewSet(viewsets.ModelViewSet):
+    queryset = Mantencion.objects.all().order_by('-fecha_programada')
+    serializer_class = MantencionSerializer
+    permission_classes = [EsAdminOReadonly]
 
 from django.db.models import Q
 

@@ -1,13 +1,54 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>mantenciones</ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Historial de Mantenciones</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">mantenciones</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+
+  <!-- BOTÓN DE REGISTRO: Visible ÚNICAMENTE si es Administrador -->
+  <ion-button *ngIf="isAdmin" expand="block" color="success" class="ion-margin-bottom" routerLink="/crear-mantencion">
+    <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+    Registrar Nueva Mantención
+  </ion-button>
+
+  <!-- MENSAJE INFORMATIVO PARA USUARIO NORMAL -->
+  <ion-note *ngIf="!isAdmin" color="medium" class="ion-margin-bottom ion-text-center" style="display: block;">
+    <ion-icon name="information-circle-outline"></ion-icon>
+    Modo Lectura: Consulta de registros de mantenciones.
+  </ion-note>
+
+  <!-- LISTADO DE MANTENCIONES -->
+  <ion-list>
+    <ion-card *ngFor="let m of mantenciones">
+      <ion-card-header>
+        <ion-card-subtitle>
+          Estado: 
+          <ion-badge [color]="m.estado === 'Completada' ? 'success' : 'warning'">
+            {{ m.estado }}
+          </ion-badge>
+        </ion-card-subtitle>
+        <ion-card-title>Vehículo: {{ m.vehiculo_patente || m.vehiculo }}</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p><strong>Tipo:</strong> {{ m.tipo_mantencion }}</p>
+        <p><strong>Fecha Programada:</strong> {{ m.fecha_programada }}</p>
+        <p><strong>Kilometraje:</strong> {{ m.km_actual }} km</p>
+        <p *ngIf="m.observaciones"><strong>Observaciones:</strong> {{ m.observaciones }}</p>
+        <p><strong>Costo Total:</strong> ${{ m.costo_total }}</p>
+
+        <!-- ACCIONES DE EDICIÓN / ELIMINACIÓN: Visibles ÚNICAMENTE para Administrador -->
+        <div *ngIf="isAdmin" class="ion-text-end ion-margin-top">
+          <ion-button size="small" color="tertiary" [routerLink]="['/editar-mantencion', m.id]">
+            <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+          <ion-button size="small" color="danger" (click)="eliminarMantencion(m.id)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+
 </ion-content>
