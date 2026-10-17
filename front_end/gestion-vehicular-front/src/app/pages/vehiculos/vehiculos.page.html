@@ -1,24 +1,274 @@
+
 <app-site-nav></app-site-nav>
 
 <div class="page-title-bar">
-  <h1><i class="fa-solid fa-truck-pickup"></i> Flota de Vehículos</h1>
+  <h1>
+    <i class="fa-solid fa-truck-pickup"></i>
+    Flota de Vehículos
+  </h1>
 </div>
 
 <ion-content [fullscreen]="true" class="ion-padding custom-content">
   <div class="main-container">
 
-    <!-- Subtítulo Informativo -->
-     <div class="info-banner">
-  <ion-icon name="information-circle-outline" class="info-banner-icon"></ion-icon>
-    <p class="page-subtitle">
-      Consulta pública del estado y disponibilidad de los vehículos de emergencia.
-      No necesitas iniciar sesión para ver esta información.
-    </p>
-</div>
+    <!-- Acciones del administrador -->
+    <div class="admin-actions" *ngIf="esAdmin">
+      <ion-button
+        color="primary"
+        shape="round"
+        (click)="abrirFormulario()">
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        Registrar vehículo
+      </ion-button>
+    </div>
 
+    <!-- Mensaje de éxito -->
+    <div class="form-feedback success" *ngIf="mensajeExito">
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      <span>{{ mensajeExito }}</span>
+    </div>
 
-    <!-- Controles de Filtro -->
+    <!-- Formulario de registro -->
+    <ion-card
+      class="vehicle-form-card"
+      *ngIf="mostrarFormulario && esAdmin">
+
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="car-sport-outline"></ion-icon>
+          Registrar nuevo vehículo
+        </ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <form (ngSubmit)="registrarVehiculo()">
+
+          <div class="form-grid">
+
+            <!-- Patente -->
+            <ion-item>
+              <ion-label position="stacked">
+                Patente *
+              </ion-label>
+
+              <ion-input
+                name="patente"
+                [(ngModel)]="formulario.patente"
+                placeholder="Ej. AB-CD-12"
+                maxlength="10"
+                required>
+              </ion-input>
+            </ion-item>
+
+            <!-- Marca -->
+            <ion-item>
+              <ion-label position="stacked">
+                Marca *
+              </ion-label>
+
+              <ion-input
+                name="marca"
+                [(ngModel)]="formulario.marca"
+                placeholder="Ej. Toyota"
+                maxlength="50"
+                required>
+              </ion-input>
+            </ion-item>
+
+            <!-- Modelo -->
+            <ion-item>
+              <ion-label position="stacked">
+                Modelo *
+              </ion-label>
+
+              <ion-input
+                name="modelo"
+                [(ngModel)]="formulario.modelo"
+                placeholder="Ej. Hilux"
+                maxlength="50"
+                required>
+              </ion-input>
+            </ion-item>
+
+            <!-- Año -->
+            <ion-item>
+              <ion-label position="stacked">
+                Año *
+              </ion-label>
+
+              <ion-input
+                name="anio"
+                type="number"
+                [(ngModel)]="formulario.anio"
+                min="1900"
+                [max]="2030"
+                required>
+              </ion-input>
+            </ion-item>
+
+            <!-- Tipo de vehículo -->
+            <ion-item>
+              <ion-label position="stacked">
+                Tipo de vehículo *
+              </ion-label>
+
+              <ion-select
+                name="tipo_vehiculo"
+                [(ngModel)]="formulario.tipo_vehiculo"
+                placeholder="Seleccionar tipo"
+                interface="popover"
+                required>
+
+                <ion-select-option
+                  *ngFor="let tipo of tiposVehiculo"
+                  [value]="tipo.id">
+                  {{ tipo.nombre_tipo }}
+                </ion-select-option>
+
+              </ion-select>
+            </ion-item>
+
+            <!-- Kilometraje -->
+            <ion-item>
+              <ion-label position="stacked">
+                Kilometraje *
+              </ion-label>
+
+              <ion-input
+                name="kilometraje"
+                type="number"
+                [(ngModel)]="formulario.kilometraje"
+                min="0"
+                required>
+              </ion-input>
+            </ion-item>
+
+            <!-- Fecha de adquisición -->
+            <ion-item>
+              <ion-label position="stacked">
+                Fecha de adquisición *
+              </ion-label>
+
+              <ion-input
+                name="fecha_adquisicion"
+                type="date"
+                [(ngModel)]="formulario.fecha_adquisicion"
+                required>
+              </ion-input>
+            </ion-item>
+
+            <!-- Estado operativo -->
+            <ion-item>
+              <ion-label position="stacked">
+                Estado operativo *
+              </ion-label>
+
+              <ion-select
+                name="estado_operativo"
+                [(ngModel)]="formulario.estado_operativo"
+                interface="popover"
+                required>
+
+                <ion-select-option value="Disponible">
+                  Disponible
+                </ion-select-option>
+
+                <ion-select-option value="Mantención">
+                  En mantención
+                </ion-select-option>
+
+                <ion-select-option value="Fuera de Servicio">
+                  Fuera de servicio
+                </ion-select-option>
+
+              </ion-select>
+            </ion-item>
+
+            <!-- Imagen opcional -->
+            <ion-item class="form-full-width">
+              <ion-label position="stacked">
+                URL de imagen (opcional)
+              </ion-label>
+
+              <ion-input
+                name="imagen"
+                [(ngModel)]="formulario.imagen"
+                placeholder="https://ejemplo.cl/vehiculo.jpg">
+              </ion-input>
+            </ion-item>
+
+          </div>
+
+          <!-- Errores -->
+          <div class="form-error" *ngIf="errorFormulario">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <span>{{ errorFormulario }}</span>
+          </div>
+
+          <!-- Botones -->
+          <div class="form-buttons">
+
+            <ion-button
+              type="submit"
+              color="primary"
+              [disabled]="guardando">
+
+              <ion-spinner
+                *ngIf="guardando"
+                name="crescent">
+              </ion-spinner>
+
+              <span *ngIf="!guardando">
+                <ion-icon
+                  name="save-outline"
+                  slot="start">
+                </ion-icon>
+                Guardar vehículo
+              </span>
+
+            </ion-button>
+
+            <ion-button
+              type="button"
+              fill="outline"
+              color="medium"
+              [disabled]="guardando"
+              (click)="cancelarFormulario()">
+
+              <ion-icon
+                name="close-outline"
+                slot="start">
+              </ion-icon>
+
+              Cancelar
+            </ion-button>
+
+          </div>
+
+          <p class="form-required-note">
+            * Campos obligatorios
+          </p>
+
+        </form>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Información de la página -->
+    <div class="info-banner">
+      <ion-icon
+        name="information-circle-outline"
+        class="info-banner-icon">
+      </ion-icon>
+
+      <p class="page-subtitle">
+        Consulta pública del estado y disponibilidad de los vehículos.
+        No necesitas iniciar sesión para ver esta información.
+      </p>
+    </div>
+
+    <!-- Filtros -->
     <div class="filters-container">
+
       <ion-searchbar
         placeholder="Buscar por patente, marca o modelo..."
         [value]="terminoBusqueda"
@@ -27,73 +277,148 @@
         class="custom-searchbar">
       </ion-searchbar>
 
-      <ion-segment [value]="filtroEstado" (ionChange)="onFiltroEstado($event)" scrollable="true" class="custom-segment">
-        <ion-segment-button *ngFor="let e of estados" [value]="e.value">
+      <ion-segment
+        [value]="filtroEstado"
+        (ionChange)="onFiltroEstado($event)"
+        scrollable="true"
+        class="custom-segment">
+
+        <ion-segment-button
+          *ngFor="let e of estados"
+          [value]="e.value">
+
           <ion-label>{{ e.label }}</ion-label>
+
         </ion-segment-button>
       </ion-segment>
+
     </div>
 
-    <!-- Estado: Cargando -->
+    <!-- Cargando -->
     <div class="state-container" *ngIf="cargando">
       <ion-spinner name="crescent" color="danger"></ion-spinner>
       <p>Cargando flota de vehículos...</p>
     </div>
 
-    <!-- Estado: Error -->
-    <div class="state-container" *ngIf="!cargando && errorMessage">
+    <!-- Error de carga -->
+    <div
+      class="state-container"
+      *ngIf="!cargando && errorMessage">
+
       <div class="state-icon-wrapper danger">
         <ion-icon name="alert-circle-outline"></ion-icon>
       </div>
+
       <p class="state-message">{{ errorMessage }}</p>
-      <ion-button color="danger" fill="outline" (click)="cargarVehiculos()" shape="round">
+
+      <ion-button
+        color="danger"
+        fill="outline"
+        (click)="cargarVehiculos()"
+        shape="round">
         Reintentar
       </ion-button>
     </div>
 
-    <!-- Estado: Sin Resultados -->
-    <div class="state-container" *ngIf="!cargando && !errorMessage && vehiculos.length === 0">
+    <!-- Sin resultados -->
+    <div
+      class="state-container"
+      *ngIf="!cargando && !errorMessage && vehiculos.length === 0">
+
       <div class="state-icon-wrapper medium">
         <ion-icon name="search-outline"></ion-icon>
       </div>
-      <p class="state-message">No se encontraron vehículos con los criterios seleccionados.</p>
-      <ion-button fill="clear" color="danger" (click)="limpiarFiltro()">
+
+      <p class="state-message">
+        No se encontraron vehículos con los criterios seleccionados.
+      </p>
+
+      <ion-button
+        fill="clear"
+        color="danger"
+        (click)="limpiarFiltro()">
         Limpiar filtros
       </ion-button>
     </div>
 
-    <!-- Grid de Vehículos -->
-    <div class="vehiculos-grid" *ngIf="!cargando && !errorMessage && vehiculos.length > 0">
-      <div class="vehiculo-card" *ngFor="let v of vehiculos">
-        
+    <!-- Listado de vehículos -->
+    <div
+      class="vehiculos-grid"
+      *ngIf="!cargando && !errorMessage && vehiculos.length > 0">
+
+      <div
+        class="vehiculo-card"
+        *ngFor="let v of vehiculos">
+
+        <!-- Encabezado -->
         <div class="vehiculo-card-header">
+
           <div class="vehiculo-info-principal">
             <h3 class="patente">{{ v.patente }}</h3>
-            <p class="modelo-anio">{{ v.marca }} {{ v.modelo }} <span class="dot">•</span> {{ v.anio }}</p>
+
+            <p class="modelo-anio">
+              {{ v.marca }} {{ v.modelo }}
+              <span class="dot">•</span>
+              {{ v.anio }}
+            </p>
           </div>
-          <ion-badge [color]="colorEstado(v.estado_operativo)" class="status-badge">
+
+          <ion-badge
+            [color]="colorEstado(v.estado_operativo)"
+            class="status-badge">
             {{ v.estado_operativo }}
           </ion-badge>
+
         </div>
 
+        <!-- Detalles -->
         <div class="vehiculo-card-body">
+
           <div class="detail-row">
-            <div class="icon-box"><ion-icon name="pricetag-outline"></ion-icon></div>
-            <span><strong>Tipo:</strong> {{ v.tipo_vehiculo_nombre || 'No especificado' }}</span>
+            <div class="icon-box">
+              <ion-icon name="pricetag-outline"></ion-icon>
+            </div>
+
+            <span>
+              <strong>Tipo:</strong>
+              {{ v.tipo_vehiculo_nombre || 'No especificado' }}
+            </span>
           </div>
+
           <div class="detail-row">
-            <div class="icon-box"><ion-icon name="speedometer-outline"></ion-icon></div>
-            <span><strong>Kilometraje:</strong> {{ v.kilometraje | number }} km</span>
+            <div class="icon-box">
+              <ion-icon name="speedometer-outline"></ion-icon>
+            </div>
+
+            <span>
+              <strong>Kilometraje:</strong>
+              {{ v.kilometraje | number }} km
+            </span>
           </div>
+
           <div class="detail-row">
-            <div class="icon-box"><ion-icon name="calendar-outline"></ion-icon></div>
-            <span><strong>Adquisición:</strong> {{ v.fecha_adquisicion }}</span>
+            <div class="icon-box">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+
+            <span>
+              <strong>Adquisición:</strong>
+              {{ v.fecha_adquisicion }}
+            </span>
           </div>
+
         </div>
 
-        <a class="vehiculo-card-link" [routerLink]="['/mantenciones']" [queryParams]="{ vehiculo: v.id }">
+        <!-- Historial de mantenciones -->
+        <a
+          class="vehiculo-card-link"
+          [routerLink]="['/mantenciones']"
+          [queryParams]="{ vehiculo: v.id }">
+
           <span>Ver historial de mantenciones</span>
+
           <ion-icon name="arrow-forward-outline"></ion-icon>
+
         </a>
 
       </div>
