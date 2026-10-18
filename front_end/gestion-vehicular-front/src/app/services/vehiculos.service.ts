@@ -40,8 +40,9 @@ export interface VehiculoCrear {
   providedIn: 'root'
 })
 export class VehiculosService {
-  private readonly baseUrl = `${environment.apiUrl}vehiculos/`;
-  private readonly tiposUrl = `${environment.apiUrl}tipos-vehiculo/`;
+  private readonly apiUrl = environment.apiUrl.replace(/\/+$/, '');
+  private readonly baseUrl = `${this.apiUrl}/vehiculos/`;
+  private readonly tiposUrl = `${this.apiUrl}/tipos-vehiculo/`;
 
   constructor(private http: HttpClient) {}
 
@@ -58,6 +59,8 @@ export class VehiculosService {
       params = params.set('estado', filtros.estado);
     }
 
+    console.log('[VehiculosService] URL vehículos:', this.baseUrl);
+
     return this.http.get<Vehiculo[]>(this.baseUrl, { params });
   }
 
@@ -66,21 +69,19 @@ export class VehiculosService {
   }
 
   listarTipos(): Observable<TipoVehiculo[]> {
-    console.log('[VehiculosService] URL de tipos:', this.tiposUrl);
+    console.log('[VehiculosService] URL tipos:', this.tiposUrl);
 
     return this.http.get<TipoVehiculo[]>(this.tiposUrl).pipe(
       tap({
-        next: (datos) => {
-          console.log('[VehiculosService] Tipos recibidos:', datos);
-        },
-        error: (error) => {
+        next: (datos) =>
+          console.log('[VehiculosService] Tipos recibidos:', datos),
+        error: (error) =>
           console.error(
-            '[VehiculosService] Error al obtener tipos:',
+            '[VehiculosService] Error:',
             error.status,
-            error.message,
-            error
-          );
-        }
+            error.url,
+            error.message
+          )
       })
     );
   }
