@@ -1,154 +1,271 @@
+
 <app-site-nav></app-site-nav>
 
-<ion-content class="ion-padding">
+<div class="page-title-bar">
+  <h1>
+    <ion-icon name="construct-outline"></ion-icon>
+    Historial de Mantenciones
+  </h1>
+</div>
 
-  <!-- CARGANDO -->
-  <div *ngIf="cargando" class="ion-text-center ion-padding">
-    <ion-spinner name="crescent"></ion-spinner>
-    <p>Cargando mantenciones...</p>
-  </div>
+<ion-content [fullscreen]="true" class="ion-padding custom-content">
+  <div class="main-container">
 
-  <!-- BOTÓN PARA ADMINISTRADOR -->
-  <ion-button
-    *ngIf="isAdmin"
-    expand="block"
-    color="success"
-    class="ion-margin-bottom"
-    (click)="irACrear()">
+    <!-- Acciones del administrador -->
+    <div class="admin-actions" *ngIf="isAdmin">
+      <ion-button
+        color="primary"
+        shape="round"
+        (click)="irACrear()">
 
-    <ion-icon
-      name="add-circle-outline"
-      slot="start">
-    </ion-icon>
+        <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+        Registrar mantención
+      </ion-button>
+    </div>
 
-    Registrar Nueva Mantención
-  </ion-button>
+    <!-- Información de la página -->
+    <div class="info-banner">
+      <ion-icon
+        name="information-circle-outline"
+        class="info-banner-icon">
+      </ion-icon>
 
-  <!-- MENSAJE PARA USUARIO NORMAL -->
-  <ion-note
-    *ngIf="!isAdmin"
-    color="medium"
-    class="ion-margin-bottom ion-text-center"
-    style="display: block;">
+      <p class="page-subtitle">
+        Consulta y seguimiento de las mantenciones programadas y realizadas
+        de los vehículos de la flota.
+      </p>
+    </div>
 
-    <ion-icon name="information-circle-outline"></ion-icon>
-    Modo lectura: puedes consultar las mantenciones, pero no modificarlas.
-  </ion-note>
+    <!-- Aviso para usuarios sin permisos de administrador -->
+    <div class="form-feedback" *ngIf="!isAdmin">
+      <ion-icon name="eye-outline"></ion-icon>
+      <span>
+        Modo lectura: puedes consultar las mantenciones, pero no modificarlas.
+      </span>
+    </div>
 
-  <!-- LISTADO -->
-  <ion-list *ngIf="!cargando">
+    <!-- Buscador y filtros -->
+    <div class="filters-container">
 
-    <ion-card *ngFor="let m of mantenciones">
+      <ion-searchbar
+        placeholder="Buscar por patente, marca, modelo o tipo..."
+        [value]="terminoBusqueda"
+        (ionInput)="onBuscar($event)"
+        debounce="300"
+        class="custom-searchbar">
+      </ion-searchbar>
 
-      <ion-card-header>
+      <ion-segment
+        [value]="filtroEstado"
+        (ionChange)="onFiltroEstado($event)"
+        scrollable="true"
+        class="custom-segment">
 
-        <ion-card-subtitle>
-          Estado:
+        <ion-segment-button
+          *ngFor="let estado of estados"
+          [value]="estado.value">
+
+          <ion-label>{{ estado.label }}</ion-label>
+
+        </ion-segment-button>
+      </ion-segment>
+
+    </div>
+
+    <!-- Cargando -->
+    <div class="state-container" *ngIf="cargando">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando mantenciones...</p>
+    </div>
+
+    <!-- Error -->
+    <div
+      class="state-container"
+      *ngIf="!cargando && errorMessage">
+
+      <div class="state-icon-wrapper danger">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+      </div>
+
+      <p class="state-message">{{ errorMessage }}</p>
+
+      <ion-button
+        color="primary"
+        fill="outline"
+        shape="round"
+        (click)="cargarMantenciones()">
+        Reintentar
+      </ion-button>
+    </div>
+
+    <!-- Listado de mantenciones -->
+    <div
+      class="vehiculos-grid"
+      *ngIf="!cargando && !errorMessage && mantencionesFiltradas.length > 0">
+
+      <div
+        class="vehiculo-card"
+        *ngFor="let m of mantencionesFiltradas">
+
+        <!-- Encabezado de la tarjeta -->
+        <div class="vehiculo-card-header">
+
+          <div class="vehiculo-info-principal">
+            <h3 class="patente">
+              {{ m.vehiculo_patente || ('Vehículo ID ' + m.vehiculo) }}
+            </h3>
+
+            <p class="modelo-anio">
+              {{ m.vehiculo_marca || '' }}
+              {{ m.vehiculo_modelo || '' }}
+            </p>
+          </div>
 
           <ion-badge
-            [color]="
-              m.estado === 'Completada' ? 'success' :
-              m.estado === 'En proceso' ? 'primary' :
-              m.estado === 'Cancelada' ? 'danger' :
-              'warning'
-            ">
-            {{ m.estado }}
+            [color]="colorEstado(m.estado)"
+            class="status-badge">
+            {{ m.estado || 'Sin estado' }}
           </ion-badge>
-        </ion-card-subtitle>
 
-        <ion-card-title>
-          Vehículo: {{ m.vehiculo_patente || ('ID ' + m.vehiculo) }}
-        </ion-card-title>
+        </div>
 
-        <ion-card-subtitle>
-          {{ m.vehiculo_marca }} {{ m.vehiculo_modelo }}
-        </ion-card-subtitle>
+        <!-- Detalles -->
+        <div class="vehiculo-card-body">
 
-      </ion-card-header>
+          <div class="detail-row">
+            <div class="icon-box">
+              <ion-icon name="construct-outline"></ion-icon>
+            </div>
 
-      <ion-card-content>
+            <span>
+              <strong>Tipo:</strong>
+              {{ m.tipo_mantencion || 'No especificado' }}
+            </span>
+          </div>
 
-        <p>
-          <strong>Tipo:</strong>
-          {{ m.tipo_mantencion }}
-        </p>
+          <div class="detail-row">
+            <div class="icon-box">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
 
-        <p>
-          <strong>Fecha programada:</strong>
-          {{ m.fecha_programada | date:'dd/MM/yyyy' }}
-        </p>
+            <span>
+              <strong>Fecha programada:</strong>
+              {{ m.fecha_programada ? (m.fecha_programada | date:'dd/MM/yyyy') : 'Sin fecha' }}
+            </span>
+          </div>
 
-        <p *ngIf="m.fecha_realizada">
-          <strong>Fecha realizada:</strong>
-          {{ m.fecha_realizada | date:'dd/MM/yyyy' }}
-        </p>
+          <div class="detail-row" *ngIf="m.fecha_realizada">
+            <div class="icon-box">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+            </div>
 
-        <p>
-          <strong>Kilometraje:</strong>
-          {{ m.km_actual | number }} km
-        </p>
+            <span>
+              <strong>Fecha realizada:</strong>
+              {{ m.fecha_realizada | date:'dd/MM/yyyy' }}
+            </span>
+          </div>
 
-        <p *ngIf="m.observaciones">
-          <strong>Observaciones:</strong>
-          {{ m.observaciones }}
-        </p>
+          <div class="detail-row">
+            <div class="icon-box">
+              <ion-icon name="speedometer-outline"></ion-icon>
+            </div>
 
-        <p>
-          <strong>Costo total:</strong>
-          {{ m.costo_total | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}
-        </p>
+            <span>
+              <strong>Kilometraje:</strong>
+              {{ m.km_actual | number }} km
+            </span>
+          </div>
 
-        <p *ngIf="m.usuario_responsable_nombre">
-          <strong>Responsable:</strong>
-          {{ m.usuario_responsable_nombre }}
-        </p>
+          <div class="detail-row">
+            <div class="icon-box">
+              <ion-icon name="cash-outline"></ion-icon>
+            </div>
 
-        <!-- ACCIONES EXCLUSIVAS DEL ADMINISTRADOR -->
+            <span>
+              <strong>Costo total:</strong>
+              {{ m.costo_total | currency:'CLP':'symbol-narrow':'1.0-0':'es-CL' }}
+            </span>
+          </div>
+
+          <div class="detail-row" *ngIf="m.usuario_responsable_nombre">
+            <div class="icon-box">
+              <ion-icon name="person-outline"></ion-icon>
+            </div>
+
+            <span>
+              <strong>Responsable:</strong>
+              {{ m.usuario_responsable_nombre }}
+            </span>
+          </div>
+
+          <div class="detail-row" *ngIf="m.observaciones">
+            <div class="icon-box">
+              <ion-icon name="document-text-outline"></ion-icon>
+            </div>
+
+            <span>
+              <strong>Observaciones:</strong>
+              {{ m.observaciones }}
+            </span>
+          </div>
+
+        </div>
+
+        <!-- Acciones del administrador -->
         <div
           *ngIf="isAdmin"
-          class="ion-text-end ion-margin-top">
+          class="vehiculo-card-actions">
 
           <ion-button
             size="small"
-            color="tertiary"
+            color="primary"
+            fill="outline"
             (click)="irAEditar(m.id)">
-            <ion-icon
-              name="create-outline"
-              slot="icon-only">
-            </ion-icon>
+
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            Editar
           </ion-button>
 
           <ion-button
             size="small"
             color="danger"
+            fill="outline"
             (click)="confirmarEliminacion(m.id)">
-            <ion-icon
-              name="trash-outline"
-              slot="icon-only">
-            </ion-icon>
+
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Eliminar
           </ion-button>
 
         </div>
 
-      </ion-card-content>
+      </div>
+    </div>
 
-    </ion-card>
+    <!-- Sin resultados -->
+    <div
+      class="state-container"
+      *ngIf="!cargando && !errorMessage && mantencionesFiltradas.length === 0">
 
-  </ion-list>
+      <div class="state-icon-wrapper medium">
+        <ion-icon name="construct-outline"></ion-icon>
+      </div>
 
-  <!-- SIN REGISTROS -->
-  <div
-    *ngIf="!cargando && mantenciones.length === 0"
-    class="ion-text-center ion-padding">
+      <p class="state-message">
+        {{ mantenciones.length === 0
+          ? 'No hay mantenciones registradas.'
+          : 'No se encontraron mantenciones con los filtros seleccionados.' }}
+      </p>
 
-    <ion-icon
-      name="construct-outline"
-      size="large"
-      color="medium">
-    </ion-icon>
+      <ion-button
+        *ngIf="terminoBusqueda || filtroEstado !== 'todas'"
+        fill="clear"
+        color="primary"
+        (click)="limpiarFiltros()">
 
-    <p>No hay mantenciones registradas.</p>
+        Limpiar filtros
+      </ion-button>
+
+    </div>
 
   </div>
-
 </ion-content>

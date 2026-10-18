@@ -1,12 +1,10 @@
+
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
 import {
-  IonHeader,
-  IonToolbar,
-  IonTitle,
   IonContent,
   IonList,
   IonItem,
@@ -22,7 +20,10 @@ import {
   IonText,
   AlertController,
   IonNote,
-  IonSpinner
+  IonSpinner,
+  IonSearchbar,
+  IonSegment,
+  IonSegmentButton
 } from '@ionic/angular';
 
 import { SiteNavComponent } from '../../shared/site-nav/site-nav.component';
@@ -39,9 +40,6 @@ import { MantencionesService } from '../../services/mantenciones.service';
     FormsModule,
     RouterModule,
     SiteNavComponent,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
     IonList,
     IonItem,
@@ -56,7 +54,10 @@ import { MantencionesService } from '../../services/mantenciones.service';
     IonCardContent,
     IonText,
     IonNote,
-    IonSpinner
+    IonSpinner,
+    IonSearchbar,
+    IonSegment,
+    IonSegmentButton
   ]
 })
 export class MantencionesPage implements OnInit {
@@ -64,6 +65,17 @@ export class MantencionesPage implements OnInit {
   mantenciones: any[] = [];
   isAdmin = false;
   cargando = false;
+  errorMessage = '';
+
+  terminoBusqueda = '';
+  filtroEstado = 'todas';
+
+  readonly estados = [
+    { value: 'todas', label: 'Todas' },
+    { value: 'pendiente', label: 'Pendientes' },
+    { value: 'en proceso', label: 'En proceso' },
+    { value: 'realizada', label: 'Realizadas' }
+  ];
 
   constructor(
     private router: Router,
@@ -82,10 +94,40 @@ export class MantencionesPage implements OnInit {
     this.cargarMantenciones();
   }
 
-  /**
-   * Comprueba el rol devuelto por el login.
-   * Solo admin y administrador pueden modificar mantenciones.
-   */
+  get mantencionesFiltradas(): any[] {
+    let resultado = [...this.mantenciones];
+
+    const busqueda = this.terminoBusqueda.trim().toLowerCase();
+
+    if (busqueda) {
+      resultado = resultado.filter((mantencion) => {
+        const texto = [
+          mantencion.vehiculo_patente,
+          mantencion.vehiculo_marca,
+          mantencion.vehiculo_modelo,
+          mantencion.descripcion,
+          mantencion.tipo_mantencion,
+          mantencion.estado
+        ]
+          .filter(valor => valor !== null && valor !== undefined)
+          .join(' ')
+          .toLowerCase();
+
+        return texto.includes(busqueda);
+      });
+    }
+
+    if (this.filtroEstado !== 'todas') {
+      resultado = resultado.filter((mantencion) => {
+        const estado = this.obtenerEstado(mantencion);
+
+        return estado === this.normalizar(this.filtroEstado);
+      });
+    }
+
+    return resultado;
+  }
+
   verificarRolUsuario(): void {
     const rol = this.authService.getRole()
       .trim()
@@ -96,9 +138,6 @@ export class MantencionesPage implements OnInit {
     this.cdr.markForCheck();
   }
 
-  /**
-   * Carga las mantenciones desde Django.
-   */
   cargarMantenciones(): void {
     if (!this.authService.isLoggedIn()) {
       this.mantenciones = [];
@@ -107,17 +146,21 @@ export class MantencionesPage implements OnInit {
     }
 
     this.cargando = true;
+    this.errorMessage = '';
     this.cdr.markForCheck();
 
     this.mantencionService.getMantenciones().subscribe({
       next: (data: any[]) => {
         this.mantenciones = Array.isArray(data) ? data : [];
         this.cargando = false;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
+
+        console.log('Mantenciones recibidas:', this.mantenciones);
       },
       error: (err: any) => {
         console.error('Error al cargar mantenciones:', err);
         this.cargando = false;
+        this.errorMessage = 'No se pudieron cargar las mantenciones.';
 
         this.mostrarAlerta(
           'Error',
@@ -126,14 +169,69 @@ export class MantencionesPage implements OnInit {
             : 'No se pudieron cargar las mantenciones.'
         );
 
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       }
     });
   }
 
-  /**
-   * Muestra mensajes al usuario.
-   */
+  onBuscar(event: any): void {
+    this.terminoBusqueda = event?.detail?.value ?? '';
+  }
+
+  onFiltroEstado(event: any): void {
+    this.filtroEstado = event?.detail?.value ?? 'todas';
+  }
+
+  limpiarFiltros(): void {
+    this.terminoBusqueda = '';
+    this.filtroEstado = 'todas';
+  }
+
+  private obtenerEstado(mantencion: any): string {
+    const estado = mantencion?.estado
+      ?? mantencion?.estado_mantencion
+      ?? mantencion?.estado_mantenimiento
+      ?? '';
+
+    return this.normalizar(String(estado));
+  }
+
+  private normalizar(valor: string): string {
+    return valor
+      .trim()
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  }
+
+  colorEstado(estado: string): string {
+    const normalizado = this.normalizar(estado || '');
+
+    if (
+      normalizado.includes('realizada') ||
+      normalizado.includes('completada') ||
+      normalizado.includes('finalizada')
+    ) {
+      return 'success';
+    }
+
+    if (
+      normalizado.includes('pendiente') ||
+      normalizado.includes('programada')
+    ) {
+      return 'warning';
+    }
+
+    if (
+      normalizado.includes('proceso') ||
+      normalizado.includes('curso')
+    ) {
+      return 'primary';
+    }
+
+    return 'medium';
+  }
+
   async mostrarAlerta(
     titulo: string,
     mensaje: string
@@ -147,9 +245,6 @@ export class MantencionesPage implements OnInit {
     await alert.present();
   }
 
-  /**
-   * Confirma la eliminación de una mantención.
-   */
   async confirmarEliminacion(id: number): Promise<void> {
     if (!this.isAdmin) {
       await this.mostrarAlerta(
@@ -180,9 +275,6 @@ export class MantencionesPage implements OnInit {
     await alert.present();
   }
 
-  /**
-   * Elimina una mantención mediante el servicio.
-   */
   eliminarMantencion(id: number): void {
     if (!this.isAdmin) {
       return;
@@ -212,9 +304,6 @@ export class MantencionesPage implements OnInit {
     });
   }
 
-  /**
-   * Abre el formulario de creación.
-   */
   irACrear(): void {
     if (!this.isAdmin) {
       return;
@@ -223,9 +312,6 @@ export class MantencionesPage implements OnInit {
     this.router.navigate(['/mantenciones/crear']);
   }
 
-  /**
-   * Abre el formulario de edición.
-   */
   irAEditar(id: number): void {
     if (!this.isAdmin) {
       return;
